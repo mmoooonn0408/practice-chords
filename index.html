@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Chords</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --sub-text: #aaaaaa;
+            --shadow: rgba(255, 255, 255, 0.12);
+            --selector-bg: rgba(125, 125, 125, 0.15);
+        }
+
+        body.light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --sub-text: #666666;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --selector-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        /* [애니메이션 사수] 다크/라이트 모드 부드러운 전환 */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        section { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .hidden { display: none !important; }
+
+        h1 { font-size: 4rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -1px; }
+        
+        #beat-lights { 
+            display: flex; gap: 15px; margin-bottom: 10px; height: 30px; 
+            align-items: center; justify-content: center; 
+        }
+
+        .light {
+            width: 12px; height: 12px; border-radius: 50%;
+            background-color: var(--sub-text); opacity: 0.1;
+            transition: all 0.2s ease;
+        }
+        .light.active {
+            background-color: var(--text-color); opacity: 1;
+            transform: scale(1.4); box-shadow: 0 0 15px var(--text-color);
+        }
+
+        .chord-sequence-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            min-height: 12rem;
+            margin: 10px 0;
+        }
+
+        .chord-item {
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        /* 폰트 사이즈 및 위치 고정 */
+        .chord-root { font-size: 1em; line-height: 1; }
+        .chord-acc { font-size: 0.6em; vertical-align: text-top; margin-left: 0.02em; }
+        .chord-quality { font-size: 0.55em; vertical-align: baseline; }
+
+        #chord-prev { font-size: 3rem; opacity: 1; width: 25%; text-align: right; }
+        #chord-current { font-size: 10rem; opacity: 1; width: 50%; text-align: center; }
+        #chord-next { font-size: 3rem; opacity: 1; width: 25%; text-align: left; }
+        
+        .controls { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px; }
+        .mode-content-wrapper { height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+
+        .mode-selector { 
+            display: flex; gap: 10px; margin-bottom: 20px; 
+            background: var(--selector-bg); padding: 5px; border-radius: 30px;
+        }
+
+        .mode-btn {
+            padding: 10px 25px; border: none; background: transparent;
+            color: var(--sub-text); cursor: pointer; font-weight: 700;
+            font-family: 'Montserrat', sans-serif; border-radius: 25px;
+            transition: all 0.2s ease;
+        }
+        .mode-btn.active { background: var(--text-color); color: var(--bg-color); }
+
+        /* [애니메이션 사수] 쫀득한 2px 부상 버튼 */
+        .start-btn {
+            padding: 15px 45px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--btn-text);
+            background-color: var(--btn-bg);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 15px var(--shadow); opacity: 0.95; }
+        .start-btn:active { transform: translateY(-1px); }
+
+        #filter-toggle-btn {
+            background: none; border: 1px solid var(--sub-text); color: var(--sub-text);
+            padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.7rem;
+            margin-bottom: 15px; transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        #filter-toggle-btn:hover { border-color: var(--text-color); color: var(--text-color); }
+
+        #filter-panel {
+            background: var(--selector-bg); padding: 25px; border-radius: 25px;
+            width: 850px; margin-bottom: 20px; transition: all 0.3s ease;
+            display: flex; gap: 30px; text-align: left;
+        }
+
+        .filter-col { flex: 1; display: flex; flex-direction: column; }
+        .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(125,125,125,0.2); padding-bottom: 5px; }
+        .filter-group-title { font-size: 0.7rem; font-weight: 700; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; }
+
+        .chord-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
+        .chord-pill { padding: 6px 12px; border: 1px solid var(--sub-text); border-radius: 15px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; color: var(--sub-text); font-weight: 700; }
+        .chord-pill.active { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); }
+
+        .bulk-actions { display: flex; gap: 8px; }
+        .bulk-btn { background: none; border: none; color: var(--sub-text); cursor: pointer; font-size: 0.6rem; font-weight: 700; text-decoration: underline; padding: 0; }
+
+        .setting-group { display: flex; flex-direction: column; align-items: center; gap: 15px; background: var(--selector-bg); padding: 20px 30px; border-radius: 25px; width: 340px; }
+        .input-row { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: center; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(125, 125, 125, 0.2); border-radius: 5px; outline: none; margin: 10px 0; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--text-color); border-radius: 50%; cursor: pointer; transition: transform 0.2s; }
+        input[type="number"] { background: rgba(125, 125, 125, 0.1); border: 1px solid var(--sub-text); color: var(--text-color); padding: 5px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; width: 60px; border-radius: 8px; text-align: center; }
+        .theme-toggle { position: fixed; top: 30px; right: 30px; padding: 10px 22px; cursor: pointer; border: 2px solid var(--text-color); background: transparent; color: var(--text-color); border-radius: 30px; font-weight: 700; font-size: 0.8rem; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .theme-toggle:hover { background-color: var(--text-color); color: var(--bg-color); }
+        #back-btn { margin-top: 20px; background: none; border: none; color: var(--sub-text); cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; transition: color 0.4s ease; }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" id="theme-btn">LIGHT MODE</button>
+    
+    <section id="home-screen">
+        <h1>Practice Chords</h1>
+        <p>Master your chord sight-reading practice</p>
+        <button class="start-btn" id="start-btn-home">Start Practice</button>
+    </section>
+
+    <section id="practice-screen" class="hidden">
+        <div class="mode-selector">
+            <button class="mode-btn active" id="tap-mode-btn">TAP</button>
+            <button class="mode-btn" id="tempo-mode-btn">TEMPO</button>
+        </div>
+
+        <button id="filter-toggle-btn">CHORD SETTINGS</button>
+        
+        <div id="filter-panel" class="hidden">
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">Base</span>
+                    <div class="bulk-actions">
+                        <button class="bulk-btn" id="base-all-btn">ALL</button>
+                        <button class="bulk-btn" id="base-clr-btn">CLR</button>
+                    </div>
+                </div>
+                <div class="chord-pills" id="root-pills">
+                    <div class="chord-pill active" data-root="C">C</div>
+                    <div class="chord-pill active" data-root="C#,Db">C#/Db</div>
+                    <div class="chord-pill active" data-root="D">D</div>
+                    <div class="chord-pill active" data-root="D#,Eb">D#/Eb</div>
+                    <div class="chord-pill active" data-root="E">E</div>
+                    <div class="chord-pill active" data-root="F">F</div>
+                    <div class="chord-pill active" data-root="F#,Gb">F#/Gb</div>
+                    <div class="chord-pill active" data-root="G">G</div>
+                    <div class="chord-pill active" data-root="G#,Ab">G#/Ab</div>
+                    <div class="chord-pill active" data-root="A">A</div>
+                    <div class="chord-pill active" data-root="A#,Bb">A#/Bb</div>
+                    <div class="chord-pill active" data-root="B">B</div>
+                </div>
+            </div>
+
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">Triads</span>
+                    <div class="bulk-actions">
+                        <button class="bulk-btn" id="triad-all-btn">ALL</button>
+                        <button class="bulk-btn" id="triad-clr-btn">CLR</button>
+                    </div>
+                </div>
+                <div class="chord-pills" id="triad-pills">
+                    <div class="chord-pill active" data-val="">M</div>
+                    <div class="chord-pill active" data-val="m">m</div>
+                    <div class="chord-pill active" data-val="dim">dim</div>
+                    <div class="chord-pill active" data-val="aug">aug</div>
+                    <div class="chord-pill active" data-val="sus4">sus4</div>
+                </div>
+            </div>
+
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">7th Chords</span>
+                    <div class="bulk-actions">
+                        <button class="bulk-btn" id="seventh-all-btn">ALL</button>
+                        <button class="bulk-btn" id="seventh-clr-btn">CLR</button>
+                    </div>
+                </div>
+                <div class="chord-pills" id="seventh-pills">
+                    <div class="chord-pill active" data-val="maj7">maj7</div>
+                    <div class="chord-pill active" data-val="7">7</div>
+                    <div class="chord-pill active" data-val="m7">m7</div>
+                    <div class="chord-pill active" data-val="m7b5">m7(b5)</div>
+                    <div class="chord-pill active" data-val="dim7">dim7</div>
+                    <div class="chord-pill active" data-val="7sus4">7sus4</div>
+                    <div class="chord-pill active" data-val="mM7">mM7</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="beat-lights"></div>
+
+        <div class="chord-sequence-container">
+            <div id="chord-prev" class="chord-item"></div>
+            <div id="chord-current" class="chord-item">C</div>
+            <div id="chord-next" class="chord-item"></div>
+        </div>
+        
+        <div class="controls">
+            <div class="mode-content-wrapper">
+                <div id="tempo-controls" class="hidden">
+                    <div class="setting-group">
+                        <div class="input-row">
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">BPM</label>
+                            <input type="number" id="bpm-input" value="80">
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text); margin-left:10px;">EVERY</label>
+                            <input type="number" id="beats-input" value="4">
+                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text); margin-left:10px;">BEATS</label>
+                        </div>
+                        <input type="range" id="bpm-slider" min="40" max="240" value="80">
+                        <button class="start-btn" id="play-pause-btn" style="padding: 10px 25px; font-size: 0.85rem;">Play</button>
+                    </div>
+                </div>
+                <div id="tap-controls">
+                    <p id="tap-guide" style="font-size: 1.1rem; color: var(--sub-text); margin-bottom: 20px; height: 1.5rem;">Press Space or Click for next</p>
+                    <button class="start-btn" id="next-btn">Next Chord</button>
+                </div>
+            </div>
+            <button id="back-btn">Back to Home</button>
+        </div>
+    </section>
+
+    <script>
+        const themeBtn = document.getElementById('theme-btn');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            themeBtn.innerText = document.body.classList.contains('light-mode') ? 'DARK MODE' : 'LIGHT MODE';
+        });
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClick(isFirst) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(isFirst ? 1200 : 800, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        let activeRoots = ['C', 'C#', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        let activeTypes = ['', 'm', 'dim', 'aug', 'sus4', 'maj7', '7', 'm7', 'm7b5', 'dim7', '7sus4', 'mM7'];
+        
+        let currentChord = "", nextChord = "", prevChord = "";
+
+        const filterPanel = document.getElementById('filter-panel');
+        const chordPills = document.querySelectorAll('.chord-pill');
+
+        chordPills.forEach(pill => {
+            pill.addEventListener('click', () => { pill.classList.toggle('active'); updateFilters(); });
+        });
+
+        function updateFilters() {
+            activeRoots = [];
+            document.querySelectorAll('#root-pills .chord-pill.active').forEach(p => activeRoots.push(...p.getAttribute('data-root').split(',')));
+            activeTypes = [];
+            document.querySelectorAll('.chord-pill.active[data-val]').forEach(p => activeTypes.push(p.getAttribute('data-val')));
+        }
+
+        document.getElementById('base-all-btn').addEventListener('click', () => { document.querySelectorAll('#root-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
+        document.getElementById('base-clr-btn').addEventListener('click', () => { document.querySelectorAll('#root-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
+        document.getElementById('triad-all-btn').addEventListener('click', () => { document.querySelectorAll('#triad-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
+        document.getElementById('triad-clr-btn').addEventListener('click', () => { document.querySelectorAll('#triad-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
+        document.getElementById('seventh-all-btn').addEventListener('click', () => { document.querySelectorAll('#seventh-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
+        document.getElementById('seventh-clr-btn').addEventListener('click', () => { document.querySelectorAll('#seventh-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
+        document.getElementById('filter-toggle-btn').addEventListener('click', () => filterPanel.classList.toggle('hidden'));
+
+        function checkSelection() {
+            if (activeRoots.length === 0 || activeTypes.length === 0) {
+                alert("Please select at least one Base and one Chord Type to start practicing!");
+                return false;
+            }
+            return true;
+        }
+
+        function formatChordHTML(chordStr) {
+            if (!chordStr) return "";
+            if (chordStr === "---") return `<span class="chord-root">---</span>`;
+
+            const root = chordStr.charAt(0);
+            let acc = "";
+            let quality = "";
+            let rest = chordStr.slice(1);
+
+            if (rest.startsWith('#') || rest.startsWith('b')) {
+                acc = rest.charAt(0) === 'b' ? '♭' : '♯'; 
+                quality = rest.slice(1);
+            } else {
+                quality = rest;
+            }
+
+            if (quality === "M") quality = ""; 
+
+            let accTag = acc ? `<span class="chord-acc">${acc}</span>` : '';
+            let qMargin = acc ? '-0.05em' : '0.05em';
+            let qStyle = quality ? ` style="margin-left: ${qMargin};"` : '';
+            let qTag = quality ? `<span class="chord-quality"${qStyle}>${quality}</span>` : '';
+
+            return `<span class="chord-root">${root}</span>${accTag}${qTag}`;
+        }
+
+        function generateOneChord() {
+            if (activeRoots.length === 0 || activeTypes.length === 0) {
+                return "---";
+            }
+            const r = activeRoots[Math.floor(Math.random()*activeRoots.length)];
+            let t = activeTypes[Math.floor(Math.random()*activeTypes.length)];
+            if (t === "m7b5") t = "m7(b5)";
+            return r + t;
+        }
+
+        function updateChordSequence() {
+            prevChord = currentChord;
+            currentChord = nextChord;
+            nextChord = generateOneChord();
+            
+            document.getElementById('chord-prev').innerHTML = formatChordHTML(prevChord);
+            document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
+            document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
+        }
+
+        function initChords() {
+            prevChord = "";
+            currentChord = generateOneChord();
+            nextChord = generateOneChord();
+            
+            document.getElementById('chord-prev').innerHTML = "";
+            document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
+            document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
+        }
+
+        let isPlaying = false, tempoInterval = null, currentBeat = 0, currentMode = 'TAP';
+        const bpmInput = document.getElementById('bpm-input'), bpmSlider = document.getElementById('bpm-slider'), beatsInput = document.getElementById('beats-input'), playBtn = document.getElementById('play-pause-btn');
+
+        let lastValidBPM = 80;
+        function getSafeBPM() {
+            let bpm = parseInt(bpmInput.value);
+            if (isNaN(bpm)) bpm = lastValidBPM;
+            if (bpm < 40) bpm = 40;
+            if (bpm > 240) bpm = 240;
+            
+            bpmInput.value = bpm;
+            bpmSlider.value = bpm;
+            lastValidBPM = bpm;
+            return bpm;
+        }
+
+        let lastValidBeats = 4;
+        function getSafeBeats() {
+            let b = parseInt(beatsInput.value);
+            if (isNaN(b)) b = lastValidBeats;
+            if (b < 1) b = 1;
+            if (b > 4) b = 4;
+            
+            beatsInput.value = b;
+            lastValidBeats = b;
+            return b;
+        }
+
+        function tick() {
+            let bpc = getSafeBeats();
+            if (bpc < 1) { playClick(false); return; }
+            playClick(currentBeat === 0);
+            if (currentBeat === 0) updateChordSequence();
+            document.querySelectorAll('.light').forEach((l, i) => l.classList.toggle('active', i === currentBeat));
+            currentBeat = (currentBeat + 1) % bpc;
+        }
+
+        bpmSlider.addEventListener('input', () => { 
+            bpmInput.value = bpmSlider.value; 
+            lastValidBPM = parseInt(bpmSlider.value);
+            if (isPlaying) { 
+                clearInterval(tempoInterval); 
+                tempoInterval = setInterval(tick, (60 / lastValidBPM) * 1000); 
+            } 
+        });
+
+        bpmInput.addEventListener('change', () => { 
+            let bpm = getSafeBPM();
+            if (isPlaying) { 
+                clearInterval(tempoInterval); 
+                tempoInterval = setInterval(tick, (60 / bpm) * 1000); 
+            } 
+        });
+
+        beatsInput.addEventListener('change', () => { 
+            getSafeBeats();
+            currentBeat = 0; 
+            if (isPlaying) { 
+                clearInterval(tempoInterval); 
+                tick(); 
+                tempoInterval = setInterval(tick, (60 / lastValidBPM) * 1000); 
+            } 
+            createLights(); 
+        });
+
+        function createLights() {
+            const lightsContainer = document.getElementById('beat-lights');
+            lightsContainer.innerHTML = '';
+            let count = currentMode === 'TAP' ? 4 : getSafeBeats();
+            for (let i = 0; i < count; i++) {
+                const div = document.createElement('div');
+                div.className = 'light';
+                if (currentMode === 'TAP') div.style.opacity = "0"; 
+                lightsContainer.appendChild(div);
+            }
+        }
+
+        document.getElementById('tap-mode-btn').addEventListener('click', (e) => { currentMode = 'TAP'; stop(); e.target.classList.add('active'); document.getElementById('tempo-mode-btn').classList.remove('active'); document.getElementById('tempo-controls').classList.add('hidden'); document.getElementById('tap-controls').classList.remove('hidden'); createLights(); });
+        document.getElementById('tempo-mode-btn').addEventListener('click', (e) => { currentMode = 'TEMPO'; e.target.classList.add('active'); document.getElementById('tap-mode-btn').classList.remove('active'); document.getElementById('tempo-controls').classList.remove('hidden'); document.getElementById('tap-controls').classList.add('hidden'); createLights(); });
+        
+        document.getElementById('start-btn-home').addEventListener('click', () => { 
+            if (!checkSelection()) return; 
+            document.getElementById('home-screen').classList.add('hidden'); 
+            document.getElementById('practice-screen').classList.remove('hidden'); 
+            initChords(); createLights(); 
+        });
+
+        function stop() { clearInterval(tempoInterval); isPlaying = false; currentBeat = 0; playBtn.innerText = 'Play'; document.querySelectorAll('.light').forEach(l => l.classList.remove('active')); }
+        
+        playBtn.addEventListener('click', () => { 
+            if (isPlaying) stop(); 
+            else { 
+                if (!checkSelection()) return; 
+                let bpm = getSafeBPM();
+                isPlaying = true; playBtn.innerText = 'Stop'; currentBeat = 0; tick(); 
+                tempoInterval = setInterval(tick, (60 / bpm) * 1000); 
+            } 
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => { if (!checkSelection()) return; updateChordSequence(); });
+        
+        window.addEventListener('keydown', (e) => { 
+            if (e.code === 'Space') {
+                if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+                    document.activeElement.blur();
+                }
+                if (!document.getElementById('practice-screen').classList.contains('hidden')) {
+                    e.preventDefault(); 
+                    if (currentMode === 'TAP') {
+                        if(checkSelection()) document.getElementById('next-btn').click(); 
+                    } else if (currentMode === 'TEMPO') {
+                        document.getElementById('play-pause-btn').click(); 
+                    }
+                }
+            }
+        });
+
+        document.getElementById('back-btn').addEventListener('click', () => { stop(); document.getElementById('practice-screen').classList.add('hidden'); document.getElementById('home-screen').classList.remove('hidden'); });
+    </script>
+</body>
+</html>
