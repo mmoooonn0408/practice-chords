@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PracticeChords.io</title>
-    
+
     <meta name="description" content="Master your chord sight-reading with PracticeChords.io. The ultimate tool for musicians and piano students to practice chords efficiently.">
     <meta name="keywords" content="chord practice, piano chords, sight-reading, music theory, chord trainer, PracticeChords">
     <link rel="canonical" href="https://practicechords.io">
@@ -14,9 +14,7 @@
     <meta property="og:description" content="Improve your chord recognition speed with our minimal and professional practice tool.">
     <meta property="og:url" content="https://practicechords.io">
     <meta property="og:image" content="https://practicechords.io/icon-512.png">
-    
-    <meta name="google-site-verification" content="4--kNvUBG23Cd1KMSvvRPOI9JtG8emtkUPh4dZCDUp0" />
-    
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -52,39 +50,65 @@
             --selector-bg: rgba(0, 0, 0, 0.05);
         }
 
-        /* --- 💻 공통 및 PC 버전 레이아웃 --- */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* 핵심 1: 화면 위쪽부터 차곡차곡 쌓기 (중앙정렬 해제) */
-            align-items: center;
-            min-height: 100vh;           /* 핵심 2: 내용이 길어지면 화면도 알아서 늘어나게 */
+            min-height: 100vh;
             margin: 0;
             font-family: 'Montserrat', sans-serif;
             transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
             overflow-x: hidden;
-            overflow-y: auto;            /* 핵심 3: 화면이 좁으면 무조건 세로 스크롤 생성! */
+            overflow-y: auto;
         }
 
-        #top-logo {
-            position: fixed; top: 30px; left: 30px; font-size: 1.5rem; font-weight: 700;
-            cursor: pointer; letter-spacing: -1px; z-index: 1000;
-            transition: opacity 0.3s ease, color 0.5s;
+        /* 💡 수정 1: 상단 헤더 영역을 만들어서 배경색 칠하기 (스크롤 시 글자 안 비침) */
+        #top-header {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 90px;
+            background-color: var(--bg-color); 
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        #top-logo { font-size: 1.5rem; font-weight: 700; cursor: pointer; letter-spacing: -1px; transition: opacity 0.3s ease, color 0.5s; }
         #top-logo:hover { opacity: 0.6; }
 
-        .theme-toggle {
-            position: fixed; top: 30px; right: 30px; padding: 10px 22px; cursor: pointer;
-            border: 2px solid var(--text-color); background: transparent; color: var(--text-color);
-            border-radius: 30px; font-weight: 700; font-size: 0.8rem; z-index: 1000;
-            transition: all 0.4s;
-        }
+        .theme-toggle { padding: 10px 22px; cursor: pointer; border: 2px solid var(--text-color); background: transparent; color: var(--text-color); border-radius: 30px; font-weight: 700; font-size: 0.8rem; transition: all 0.4s; }
         .theme-toggle:hover { background-color: var(--text-color); color: var(--bg-color); }
 
-        section { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        /* 💡 수정 2: 콘텐츠 전체를 감싸서, 헤더(90px) 아래로 밀어내기 (맨 위로 올려도 안 겹침) */
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1; /* 남은 공간 모두 차지 (푸터를 바닥으로 밀어냄) */
+            width: 100%;
+            padding-top: 90px; /* 여기서 헤더 높이만큼 범퍼 역할을 해줍니다! */
+            box-sizing: border-box;
+        }
+
+        /* 💡 수정 3: PC나 아이패드에서 완벽하게 상하 중앙 정렬되도록 오토 마진 적용 */
+        section { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 900px; 
+            margin-top: auto;    /* 위쪽 여백 자동 계산 (중앙 정렬의 핵심) */
+            margin-bottom: auto; /* 아래쪽 여백 자동 계산 */
+            padding: 20px 20px 40px 20px;
+            box-sizing: border-box;
+        }
         .hidden { display: none !important; }
 
         h1 { font-size: 4rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -1px; }
@@ -105,7 +129,7 @@
         #chord-next { font-size: 3rem; opacity: 1; width: 25%; text-align: left; }
         
         .controls { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px; }
-        .mode-content-wrapper { height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .mode-content-wrapper { height: auto; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
 
         .mode-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--selector-bg); padding: 5px; border-radius: 30px; }
         .mode-btn { padding: 10px 25px; border: none; background: transparent; color: var(--sub-text); cursor: pointer; font-weight: 700; font-family: 'Montserrat', sans-serif; border-radius: 25px; transition: all 0.2s ease; }
@@ -118,7 +142,7 @@
         #filter-toggle-btn { background: none; border: 1px solid var(--sub-text); color: var(--sub-text); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-bottom: 15px; transition: all 0.3s; letter-spacing: 1px; }
         #filter-toggle-btn:hover { border-color: var(--text-color); color: var(--text-color); }
 
-        #filter-panel { background: var(--selector-bg); padding: 25px; border-radius: 25px; width: 850px; margin-bottom: 20px; transition: all 0.3s ease; display: flex; gap: 30px; text-align: left; }
+        #filter-panel { background: var(--selector-bg); padding: 25px; border-radius: 25px; width: 100%; max-width: 850px; margin-bottom: 20px; transition: all 0.3s ease; display: flex; gap: 30px; text-align: left; box-sizing: border-box;}
         .filter-col { flex: 1; display: flex; flex-direction: column; }
         .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(125,125,125,0.2); padding-bottom: 5px; }
         .filter-group-title { font-size: 0.7rem; font-weight: 700; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; }
@@ -130,7 +154,7 @@
         .bulk-actions { display: flex; gap: 8px; }
         .bulk-btn { background: none; border: none; color: var(--sub-text); cursor: pointer; font-size: 0.6rem; font-weight: 700; text-decoration: underline; padding: 0; }
 
-        .setting-group { display: flex; flex-direction: column; align-items: center; gap: 15px; background: var(--selector-bg); padding: 20px 30px; border-radius: 25px; width: 340px; }
+        .setting-group { display: flex; flex-direction: column; align-items: center; gap: 15px; background: var(--selector-bg); padding: 20px 30px; border-radius: 25px; width: 100%; max-width: 340px; box-sizing: border-box;}
         .input-row { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: center; }
         input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(125, 125, 125, 0.2); border-radius: 5px; outline: none; margin: 10px 0; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--text-color); border-radius: 50%; cursor: pointer; transition: transform 0.2s; }
@@ -138,156 +162,143 @@
         
         #back-btn { margin-top: 20px; background: none; border: none; color: var(--sub-text); cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; transition: color 0.4s; }
 
-        /* --- 📱 모바일 버전 (850px 이하 화면에서만 발동) --- */
+        /* --- 📱 모바일 버전 --- */
         @media (max-width: 850px) {
-            body {
-                height: auto;
-                min-height: 100vh;
-                overflow-y: auto; /* 세로 스크롤 생성 */
-                justify-content: flex-start; /* 화면 잘림 방지 */
-                padding: 80px 10px 40px 10px; /* 로고와 푸터 여백 */
-            }
-            #top-logo { top: 20px; left: 15px; font-size: 1.2rem; }
-            .theme-toggle { top: 20px; right: 15px; padding: 8px 16px; font-size: 0.7rem; }
+            #top-header { height: 75px; padding: 0 15px; }
+            .content-wrapper { padding-top: 75px; } /* 모바일 헤더 높이에 맞게 본문도 조절 */
+            #top-logo { font-size: 1.2rem; }
+            .theme-toggle { padding: 8px 16px; font-size: 0.7rem; }
             
             h1 { font-size: 2.2rem; margin-top: 20px; }
             
-            /* 필터 패널이 모바일에서 세로로 예쁘게 쌓이도록 */
-            #filter-panel {
-                width: 90%;
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
+            #filter-panel { flex-direction: column; gap: 15px; padding: 15px; }
             
-            /* 코드 글자 크기 축소 */
             #chord-current { font-size: 4.5rem; width: 100%; }
             #chord-prev, #chord-next { font-size: 1.5rem; width: 25%; }
             .chord-sequence-container { min-height: 8rem; gap: 5px; }
-            
-            .setting-group { width: 90%; padding: 20px 15px; }
-            .mode-content-wrapper { height: auto; min-height: 150px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="top-logo">PracticeChords.io</div>
-    <button class="theme-toggle" id="theme-btn">LIGHT MODE</button>
+    <header id="top-header">
+        <div id="top-logo">PracticeChords.io</div>
+        <button class="theme-toggle" id="theme-btn">LIGHT MODE</button>
+    </header>
     
-    <section id="home-screen">
-        <h1>PracticeChords.io</h1>
-        <p>Master your chord sight-reading</p>
-        <button class="start-btn" id="start-btn-home">Start Practice</button>
-    </section>
+    <div class="content-wrapper">
+        <section id="home-screen">
+            <h1>PracticeChords.io</h1>
+            <p>Master your chord sight-reading</p>
+            <button class="start-btn" id="start-btn-home">START PRACTICE</button>
+        </section>
 
-    <section id="practice-screen" class="hidden">
-        <div class="mode-selector">
-            <button class="mode-btn active" id="tap-mode-btn">TAP</button>
-            <button class="mode-btn" id="tempo-mode-btn">TEMPO</button>
-        </div>
-
-        <button id="filter-toggle-btn">CHORD SELECTION</button>
-        
-        <div id="filter-panel" class="hidden">
-            <div class="filter-col">
-                <div class="filter-header">
-                    <span class="filter-group-title">Base</span>
-                    <div class="bulk-actions">
-                        <button class="bulk-btn" id="base-all-btn">ALL</button>
-                        <button class="bulk-btn" id="base-clr-btn">CLR</button>
-                    </div>
-                </div>
-                <div class="chord-pills" id="root-pills">
-                    <div class="chord-pill active" data-root="C">C</div>
-                    <div class="chord-pill active" data-root="C#,Db">C#/Db</div>
-                    <div class="chord-pill active" data-root="D">D</div>
-                    <div class="chord-pill active" data-root="D#,Eb">D#/Eb</div>
-                    <div class="chord-pill active" data-root="E">E</div>
-                    <div class="chord-pill active" data-root="F">F</div>
-                    <div class="chord-pill active" data-root="F#,Gb">F#/Gb</div>
-                    <div class="chord-pill active" data-root="G">G</div>
-                    <div class="chord-pill active" data-root="G#,Ab">G#/Ab</div>
-                    <div class="chord-pill active" data-root="A">A</div>
-                    <div class="chord-pill active" data-root="A#,Bb">A#/Bb</div>
-                    <div class="chord-pill active" data-root="B">B</div>
-                </div>
+        <section id="practice-screen" class="hidden">
+            <div class="mode-selector">
+                <button class="mode-btn active" id="tap-mode-btn">TAP</button>
+                <button class="mode-btn" id="tempo-mode-btn">TEMPO</button>
             </div>
 
-            <div class="filter-col">
-                <div class="filter-header">
-                    <span class="filter-group-title">Triads</span>
-                    <div class="bulk-actions">
-                        <button class="bulk-btn" id="triad-all-btn">ALL</button>
-                        <button class="bulk-btn" id="triad-clr-btn">CLR</button>
-                    </div>
-                </div>
-                <div class="chord-pills" id="triad-pills">
-                    <div class="chord-pill active" data-val="">M</div>
-                    <div class="chord-pill active" data-val="m">m</div>
-                    <div class="chord-pill active" data-val="dim">dim</div>
-                    <div class="chord-pill active" data-val="aug">aug</div>
-                    <div class="chord-pill active" data-val="sus4">sus4</div>
-                </div>
-            </div>
-
-            <div class="filter-col">
-                <div class="filter-header">
-                    <span class="filter-group-title">7th Chords</span>
-                    <div class="bulk-actions">
-                        <button class="bulk-btn" id="seventh-all-btn">ALL</button>
-                        <button class="bulk-btn" id="seventh-clr-btn">CLR</button>
-                    </div>
-                </div>
-                <div class="chord-pills" id="seventh-pills">
-                    <div class="chord-pill active" data-val="maj7">maj7</div>
-                    <div class="chord-pill active" data-val="7">7</div>
-                    <div class="chord-pill active" data-val="m7">m7</div>
-                    <div class="chord-pill active" data-val="m7b5">m7(b5)</div>
-                    <div class="chord-pill active" data-val="dim7">dim7</div>
-                    <div class="chord-pill active" data-val="7sus4">7sus4</div>
-                    <div class="chord-pill active" data-val="mM7">mM7</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="beat-lights"></div>
-
-        <div class="chord-sequence-container">
-            <div id="chord-prev" class="chord-item"></div>
-            <div id="chord-current" class="chord-item">C</div>
-            <div id="chord-next" class="chord-item"></div>
-        </div>
-        
-        <div class="controls">
-            <div class="mode-content-wrapper">
-                <div id="tempo-controls" class="hidden">
-                    <div class="setting-group">
-                        <div class="input-row">
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">BPM</label>
-                            <input type="number" id="bpm-input" value="80">
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">EVERY</label>
-                            <input type="number" id="beats-input" value="4">
-                            <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">BEATS</label>
+            <button id="filter-toggle-btn">CHORD SELECTION</button>
+            
+            <div id="filter-panel" class="hidden">
+                <div class="filter-col">
+                    <div class="filter-header">
+                        <span class="filter-group-title">Base</span>
+                        <div class="bulk-actions">
+                            <button class="bulk-btn" id="base-all-btn">ALL</button>
+                            <button class="bulk-btn" id="base-clr-btn">CLR</button>
                         </div>
-                        <input type="range" id="bpm-slider" min="40" max="240" value="80">
-                        <button class="start-btn" id="play-pause-btn" style="margin-top: 10px; padding: 10px 30px;">Play</button>
+                    </div>
+                    <div class="chord-pills" id="root-pills">
+                        <div class="chord-pill active" data-root="C">C</div>
+                        <div class="chord-pill active" data-root="C#,Db">C#/Db</div>
+                        <div class="chord-pill active" data-root="D">D</div>
+                        <div class="chord-pill active" data-root="D#,Eb">D#/Eb</div>
+                        <div class="chord-pill active" data-root="E">E</div>
+                        <div class="chord-pill active" data-root="F">F</div>
+                        <div class="chord-pill active" data-root="F#,Gb">F#/Gb</div>
+                        <div class="chord-pill active" data-root="G">G</div>
+                        <div class="chord-pill active" data-root="G#,Ab">G#/Ab</div>
+                        <div class="chord-pill active" data-root="A">A</div>
+                        <div class="chord-pill active" data-root="A#,Bb">A#/Bb</div>
+                        <div class="chord-pill active" data-root="B">B</div>
                     </div>
                 </div>
-                <div id="tap-controls">
-                    <p id="tap-guide" style="font-size: 1rem; color: var(--sub-text); margin-bottom: 10px;">Press Space or Click for next</p>
-                    <button class="start-btn" id="next-btn" style="margin-top: 5px;">Next Chord</button>
+
+                <div class="filter-col">
+                    <div class="filter-header">
+                        <span class="filter-group-title">Triads</span>
+                        <div class="bulk-actions">
+                            <button class="bulk-btn" id="triad-all-btn">ALL</button>
+                            <button class="bulk-btn" id="triad-clr-btn">CLR</button>
+                        </div>
+                    </div>
+                    <div class="chord-pills" id="triad-pills">
+                        <div class="chord-pill active" data-val="">M</div>
+                        <div class="chord-pill active" data-val="m">m</div>
+                        <div class="chord-pill active" data-val="dim">dim</div>
+                        <div class="chord-pill active" data-val="aug">aug</div>
+                        <div class="chord-pill active" data-val="sus4">sus4</div>
+                    </div>
+                </div>
+
+                <div class="filter-col">
+                    <div class="filter-header">
+                        <span class="filter-group-title">7th Chords</span>
+                        <div class="bulk-actions">
+                            <button class="bulk-btn" id="seventh-all-btn">ALL</button>
+                            <button class="bulk-btn" id="seventh-clr-btn">CLR</button>
+                        </div>
+                    </div>
+                    <div class="chord-pills" id="seventh-pills">
+                        <div class="chord-pill active" data-val="maj7">maj7</div>
+                        <div class="chord-pill active" data-val="7">7</div>
+                        <div class="chord-pill active" data-val="m7">m7</div>
+                        <div class="chord-pill active" data-val="m7b5">m7(b5)</div>
+                        <div class="chord-pill active" data-val="dim7">dim7</div>
+                        <div class="chord-pill active" data-val="7sus4">7sus4</div>
+                        <div class="chord-pill active" data-val="mM7">mM7</div>
+                    </div>
                 </div>
             </div>
-            <button id="back-btn">Back to Home</button>
+
+            <div id="beat-lights"></div>
+
+            <div class="chord-sequence-container">
+                <div id="chord-prev" class="chord-item"></div>
+                <div id="chord-current" class="chord-item">C</div>
+                <div id="chord-next" class="chord-item"></div>
+            </div>
+            
+            <div class="controls">
+                <div class="mode-content-wrapper">
+                    <div id="tempo-controls" class="hidden">
+                        <div class="setting-group">
+                            <div class="input-row">
+                                <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">BPM</label>
+                                <input type="number" id="bpm-input" value="80">
+                                <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">EVERY</label>
+                                <input type="number" id="beats-input" value="4">
+                                <label style="font-size:0.75rem; font-weight:700; color:var(--sub-text);">BEATS</label>
+                            </div>
+                            <input type="range" id="bpm-slider" min="40" max="240" value="80">
+                            <button class="start-btn" id="play-pause-btn" style="margin-top: 10px; padding: 10px 30px;">Play</button>
+                        </div>
+                    </div>
+                    <div id="tap-controls">
+                        <p id="tap-guide" style="font-size: 1rem; color: var(--sub-text); margin-bottom: 10px;">Press Space or Click for next</p>
+                        <button class="start-btn" id="next-btn" style="margin-top: 5px;">NEXT CHORD</button>
+                    </div>
+                </div>
+                <button id="back-btn">Back to Home</button>
+            </div>
+        </section>
+
+        <div style="width: 100%; text-align: center; font-size: 0.65rem; font-weight: 400; color: var(--sub-text); opacity: 0.6; padding: 20px 0; letter-spacing: 0.5px;">
+            &copy; 2026 PracticeChords.io. All rights reserved.
         </div>
-    </section>
-
-    <div style="width: 100%; text-align: center; font-size: 0.65rem; font-weight: 400; color: var(--sub-text); opacity: 0.6; padding: 40px 0 20px 0; margin-top: auto; letter-spacing: 0.5px;">
-        &copy; 2026 PracticeChords.io. All rights reserved.
-    </div>
-
-    <script>
+    </div> <script>
         const themeBtn = document.getElementById('theme-btn');
         themeBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
@@ -480,11 +491,11 @@
 
         document.getElementById('back-btn').addEventListener('click', () => { stop(); document.getElementById('practice-screen').classList.add('hidden'); document.getElementById('home-screen').classList.remove('hidden'); });
 
-        // PWA 서비스 워커 등록
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker Registered'));
-        }
+        // PWA 서비스 워커 등록 (디자인 다 고칠 때까지 임시로 꺼둠!)
+        // if ('serviceWorker' in navigator) {
+        //     navigator.serviceWorker.register('/sw.js')
+        //         .then(() => console.log('Service Worker Registered'));
+        // }
     </script>
 </body>
 </html>
