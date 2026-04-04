@@ -561,6 +561,49 @@ document.addEventListener('click', (e) => {
     }
   };
 
+import { useEffect } from "react";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+
+export default function App({ Component, pageProps }) {
+  useEffect(() => {
+    const auth = getAuth();
+    const TIMEOUT_MS = 5 * 60 * 1000; // 5분
+
+    const checkSessionTimeout = () => {
+      const lastActive = localStorage.getItem("lastActiveTime");
+      if (lastActive && (Date.now() - parseInt(lastActive, 10) > TIMEOUT_MS)) {
+        signOut(auth).then(() => {
+          localStorage.removeItem("lastActiveTime");
+          alert("Signed out due to inactivity.");
+        });
+      }
+    };
+
+    const updateActivityTime = () => {
+      if (auth.currentUser) {
+        localStorage.setItem("lastActiveTime", Date.now().toString());
+      }
+    };
+
+    // 처음 렌더링될 때 체크
+    checkSessionTimeout();
+
+    // 이벤트 리스너 등록
+    window.addEventListener("mousemove", updateActivityTime);
+    window.addEventListener("keydown", updateActivityTime);
+    window.addEventListener("click", updateActivityTime);
+
+    // 컴포넌트가 언마운트될 때 리스너 청소(Clean-up) - React 필수!
+    return () => {
+      window.removeEventListener("mousemove", updateActivityTime);
+      window.removeEventListener("keydown", updateActivityTime);
+      window.removeEventListener("click", updateActivityTime);
+    };
+  }, []); // 빈 배열을 넣어 한 번만 실행되게 함
+
+  return <Component {...pageProps} />;
+}
+
   // 5. 로그인 상태 감시 (로그인 상태에 따라 버튼 글자 바꾸기)
   const signinBtn = document.getElementById('signin-btn');
   onAuthStateChanged(auth, (user) => {
