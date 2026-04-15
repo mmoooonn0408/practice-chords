@@ -148,9 +148,13 @@
                 justify-content: flex-start; /* 화면 잘림 방지 */
                 padding: 80px 10px 40px 10px; /* 로고와 푸터 여백 */
             }
-            #top-logo { top: 20px; left: 15px; font-size: 1.2rem; }
+            #top-logo { display: none !important; }
             .theme-toggle { top: 20px; right: 15px; padding: 8px 16px; font-size: 0.7rem; }
             
+            #signin-btn {
+                right: auto !important; /* 기존에 오른쪽으로 190px 당기던 힘을 무력화 */
+                left: 15px !important;  /* 왼쪽에서 15px 띄워서 로고 자리에 안착 */
+            }
             h1 { font-size: 2.2rem; margin-top: 20px; }
             
             /* 필터 패널이 모바일에서 세로로 예쁘게 쌓이도록 */
