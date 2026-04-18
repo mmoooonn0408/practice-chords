@@ -306,19 +306,18 @@ input[type="number"] { background: rgba(125, 125, 125, 0.1); border: 1px solid v
 }
 .voicing-row:hover { background: rgba(125,125,125,0.25); }
 .voicing-row.active { background: rgba(74,144,226,0.2); border: 1px solid #4a90e2; }
-.voicing-row-chord {
+.voicing-row-degrees {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: var(--text-color);
-    min-width: 80px;
-    letter-spacing: -0.5px;
+    letter-spacing: 2px;
 }
 .voicing-row-notes {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-color);
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--sub-text);
     letter-spacing: 1px;
 }
 .voicing-row-meta {

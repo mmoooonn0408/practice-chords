@@ -647,6 +647,13 @@ function intervalsToNoteNamesStr(intervals) {
     }).join(' ');
 }
 
+// interval을 코드 도수 라벨로 변환 (재즈 실용 기준)
+// 0→1, 1→b9, 2→9, 3→b3, 4→3, 5→11, 6→b5, 7→5, 8→b13, 9→13, 10→b7, 11→7
+const DEGREE_LABELS = ['1', 'b9', '9', 'b3', '3', '11', 'b5', '5', 'b13', '13', 'b7', '7'];
+function intervalsToDegreesStr(intervals) {
+    return intervals.map(iv => DEGREE_LABELS[iv % 12]).join(' ');
+}
+
 // --- 저장/불러오기/삭제 (Firestore 호출 — auth.js가 함수 제공) ---
 async function saveCurrentVoicing() {
     if (voicingActiveMidiNotes.size === 0) {
@@ -686,7 +693,9 @@ async function loadVoicingsForCurrentQuality() {
     }
 }
 
-async function deleteVoicing(voicingId) {
+// ⚠️ 이름 주의: window.deleteVoicing (auth.js, Firestore 직결)과 충돌 피하려고
+//    app.js 쪽은 handleVoicingDelete로 명명
+async function handleVoicingDelete(voicingId) {
     if (typeof window.deleteVoicing !== 'function') return;
     if (!confirm('Delete this voicing?')) return;
     try {
@@ -721,24 +730,14 @@ function renderVoicingList() {
         return;
     }
 
-    // 현재 선택된 루트 이름 (라벨용)
-    const rootName = FLAT_ROOTS.includes(voicingRootSemitone)
-        ? NOTE_NAMES_FLAT[voicingRootSemitone]
-        : NOTE_NAMES_SHARP[voicingRootSemitone];
-    const qualitySuffix = toDisplayType(voicingSelectedQuality);
-    const chordLabel = rootName + qualitySuffix;
-
     cachedVoicings.forEach(v => {
         const row = document.createElement('div');
         row.className = 'voicing-row';
         if (v.id === currentlyHighlightedVoicingId) row.classList.add('active');
         row.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
-                <div class="voicing-row-chord">${chordLabel}</div>
-                <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <div class="voicing-row-notes">${intervalsToNoteNamesStr(v.intervals)}</div>
-                    <div class="voicing-row-meta">${v.intervals.length} notes · intervals [${v.intervals.join(', ')}]</div>
-                </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                <div class="voicing-row-degrees">${intervalsToDegreesStr(v.intervals)}</div>
+                <div class="voicing-row-notes">${intervalsToNoteNamesStr(v.intervals)}</div>
             </div>
             <button class="voicing-delete-btn" data-id="${v.id}" title="Delete">🗑</button>
         `;
@@ -752,7 +751,7 @@ function renderVoicingList() {
         const delBtn = row.querySelector('.voicing-delete-btn');
         delBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            deleteVoicing(v.id);
+            handleVoicingDelete(v.id);
         });
         listEl.appendChild(row);
     });
