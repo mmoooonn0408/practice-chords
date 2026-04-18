@@ -336,6 +336,74 @@ input[type="number"] { background: rgba(125, 125, 125, 0.1); border: 1px solid v
 }
 .voicing-delete-btn:hover { color: #e74c3c; background: rgba(231,76,60,0.1); }
 
+/* 🕐 저장 시간 */
+.voicing-row-time {
+    font-size: 0.7rem;
+    color: var(--sub-text);
+    opacity: 0.75;
+    white-space: nowrap;
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+/* 📝 사용자 노트 — 표시 모드 */
+.voicing-row-note {
+    font-size: 0.8rem;
+    color: var(--sub-text);
+    font-style: italic;
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: text;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    transition: background 0.15s;
+}
+.voicing-row-note:hover {
+    background: rgba(125, 125, 125, 0.12);
+}
+.voicing-row-note-empty {
+    opacity: 0.55;
+    font-style: normal;
+}
+
+/* 📝 사용자 노트 — 편집 모드 (textarea) */
+.voicing-row-note-editor {
+    width: 100%;
+    min-height: 40px;
+    font-size: 0.8rem;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-color);
+    background: rgba(125, 125, 125, 0.15);
+    border: 1px solid var(--sub-text);
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    box-sizing: border-box;
+    resize: vertical;
+    line-height: 1.4;
+    outline: none;
+}
+.voicing-row-note-editor:focus {
+    border-color: var(--text-color);
+}
+
+/* 리스트 행 레이아웃: 헤더(도수 + 시간) / 노트들 / 사용자 노트 */
+.voicing-row-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+.voicing-row-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
 #voicing-empty-msg {
     color: var(--sub-text);
     font-size: 0.85rem;

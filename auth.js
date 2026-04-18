@@ -107,6 +107,13 @@ window.deleteVoicing = async (voicingId) => {
     const docRef = doc(db, "users", auth.currentUser.uid, "voicings", voicingId);
     await deleteDoc(docRef);
 };
+
+// 노트(메모) 업데이트 — merge: true 로 기존 필드(chordQuality, intervals, createdAt)는 건드리지 않음
+window.updateVoicingNote = async (voicingId, note) => {
+    if (!auth.currentUser) throw new Error("Not signed in");
+    const docRef = doc(db, "users", auth.currentUser.uid, "voicings", voicingId);
+    await setDoc(docRef, { note: note || '' }, { merge: true });
+};
 // =====================================================================
 
 // 구글 제공업체 설정 (무조건 계정 선택 창 띄우기 추가!)

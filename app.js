@@ -692,6 +692,38 @@ function intervalsToDegreesStr(intervals) {
     return intervals.map(iv => map[iv % 12]).join(' ');
 }
 
+// 🕐 상대 시간 포맷 — "today" / "3 days ago" / "2 weeks ago" / "Mar 12" / "Mar 12, 2024"
+// 1년 이상 지났으면 연도 포함해서 절대 날짜로, 그 이하는 맥락에 따라 상대/절대 혼용
+function formatRelativeTime(firestoreTimestamp) {
+    if (!firestoreTimestamp || typeof firestoreTimestamp.seconds !== 'number') return '';
+    const date = new Date(firestoreTimestamp.seconds * 1000);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'just now'; // 서버/클라이언트 시계 오차
+    if (diffDays < 1) return 'today';
+    if (diffDays === 1) return 'yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) {
+        const w = Math.floor(diffDays / 7);
+        return w === 1 ? '1 week ago' : `${w} weeks ago`;
+    }
+    // 한 달 이상: 절대 날짜. 같은 해면 연도 생략, 다른 해면 연도 포함
+    const sameYear = date.getFullYear() === now.getFullYear();
+    return date.toLocaleDateString('en-US', sameYear
+        ? { month: 'short', day: 'numeric' }
+        : { month: 'short', day: 'numeric', year: 'numeric' }
+    );
+}
+
+// HTML 이스케이프 (사용자 노트는 innerText로 써도 되지만 방어 차원)
+function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
 // --- 저장/불러오기/삭제 (Firestore 호출 — auth.js가 함수 제공) ---
 async function saveCurrentVoicing() {
     if (voicingActiveMidiNotes.size === 0) {
@@ -772,26 +804,101 @@ function renderVoicingList() {
         const row = document.createElement('div');
         row.className = 'voicing-row';
         if (v.id === currentlyHighlightedVoicingId) row.classList.add('active');
+
+        const timeStr = formatRelativeTime(v.createdAt);
+        const hasNote = v.note && v.note.trim().length > 0;
+        const noteHtml = hasNote
+            ? `<div class="voicing-row-note" data-id="${v.id}">${escapeHtml(v.note)}</div>`
+            : `<div class="voicing-row-note voicing-row-note-empty" data-id="${v.id}">+ Add note</div>`;
+
         row.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                <div class="voicing-row-degrees">${intervalsToDegreesStr(v.intervals)}</div>
+            <div class="voicing-row-body">
+                <div class="voicing-row-header">
+                    <div class="voicing-row-degrees">${intervalsToDegreesStr(v.intervals)}</div>
+                    <div class="voicing-row-time">${timeStr}</div>
+                </div>
                 <div class="voicing-row-notes">${intervalsToNoteNamesStr(v.intervals)}</div>
+                ${noteHtml}
             </div>
             <button class="voicing-delete-btn" data-id="${v.id}" title="Delete">🗑</button>
         `;
+
+        // 행 클릭: 보이싱을 건반에 로드 (단, 삭제 버튼이나 노트 영역 클릭은 제외)
         row.addEventListener('click', (e) => {
             if (e.target.closest('.voicing-delete-btn')) return;
+            if (e.target.closest('.voicing-row-note')) return;
+            if (e.target.closest('.voicing-row-note-editor')) return;
             currentlyHighlightedVoicingId = v.id;
             voicingActiveMidiNotes = new Set(intervalsToMidiNotes(v.intervals));
             refreshKeyboardVisual();
-            renderVoicingList(); // active row 표시 갱신
+            renderVoicingList();
         });
+
         const delBtn = row.querySelector('.voicing-delete-btn');
         delBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             handleVoicingDelete(v.id);
         });
+
+        // 노트 클릭 시 인라인 편집 모드로 전환
+        const noteEl = row.querySelector('.voicing-row-note');
+        noteEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openNoteEditor(noteEl, v);
+        });
+
         listEl.appendChild(row);
+    });
+}
+
+// 📝 노트 인라인 편집: 표시 div를 textarea로 교체, blur/Enter에서 저장, Esc에서 취소
+function openNoteEditor(noteEl, voicing) {
+    if (typeof window.updateVoicingNote !== 'function') {
+        alert('Please sign in to edit notes.');
+        return;
+    }
+    const currentNote = voicing.note || '';
+    const textarea = document.createElement('textarea');
+    textarea.className = 'voicing-row-note-editor';
+    textarea.value = currentNote;
+    textarea.placeholder = 'e.g., Learned from Hank Jones video — works well over ii-V in Bill Evans style';
+    // click이 부모 row로 버블링되어 보이싱이 로드되는 것을 방지
+    textarea.addEventListener('click', (e) => e.stopPropagation());
+
+    noteEl.replaceWith(textarea);
+    textarea.focus();
+    // 커서를 끝으로
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    let finalized = false;
+    const commit = async (shouldSave) => {
+        if (finalized) return;
+        finalized = true;
+        const newNote = textarea.value.trim();
+        if (shouldSave && newNote !== currentNote.trim()) {
+            try {
+                await window.updateVoicingNote(voicing.id, newNote);
+                // 로컬 캐시도 업데이트 (Firestore 재조회 생략)
+                const idx = cachedVoicings.findIndex(x => x.id === voicing.id);
+                if (idx >= 0) cachedVoicings[idx].note = newNote;
+            } catch (err) {
+                console.error('Failed to save note:', err);
+                alert('Failed to save note. Check console.');
+            }
+        }
+        renderVoicingList();
+    };
+
+    textarea.addEventListener('blur', () => commit(true));
+    textarea.addEventListener('keydown', (e) => {
+        // Enter(Shift 없이)로 저장, Shift+Enter는 줄바꿈 허용
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            textarea.blur(); // blur 핸들러에서 저장
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            commit(false);
+        }
     });
 }
 
