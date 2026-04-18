@@ -14,12 +14,12 @@
     <meta property="og:description" content="Improve your chord recognition speed with our minimal and professional practice tool.">
     <meta property="og:url" content="https://practicechords.io">
     <meta property="og:image" content="https://practicechords.io/icon-512.png">
-    
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="icon" href="icon-192.png">
-    
+
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TK98YQ8RFD"></script>
     <script>
@@ -28,231 +28,16 @@
       gtag('js', new Date());
       gtag('config', 'G-TK98YQ8RFD');
     </script>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-color: #000000;
-            --text-color: #ffffff;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --sub-text: #aaaaaa;
-            --shadow: rgba(255, 255, 255, 0.12);
-            --selector-bg: rgba(125, 125, 125, 0.15);
-        }
-
-        body.light-mode {
-            --bg-color: #ffffff;
-            --text-color: #000000;
-            --btn-bg: #000000;
-            --btn-text: #ffffff;
-            --sub-text: #666666;
-            --shadow: rgba(0, 0, 0, 0.08);
-            --selector-bg: rgba(0, 0, 0, 0.05);
-        }
-
-        /* --- 💻 PC 버전 (원래 코드 완벽 복구: 건드리지 않음) --- */
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        #top-logo {
-            position: fixed; top: 30px; left: 30px; font-size: 1.5rem; font-weight: 700;
-            cursor: pointer; letter-spacing: -1px; z-index: 1000;
-            transition: opacity 0.3s ease, color 0.5s;
-        }
-        #top-logo:hover { opacity: 0.6; }
-
-        .theme-toggle {
-            position: fixed; top: 30px; right: 30px; padding: 10px 22px; cursor: pointer;
-            border: 2px solid var(--text-color); background: transparent; color: var(--text-color);
-            border-radius: 30px; font-weight: 700; font-size: 0.8rem; z-index: 1000;
-            transition: all 0.4s;
-        }
-        .theme-toggle:hover { background-color: var(--text-color); color: var(--bg-color); }
-
-        section { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%; 
-            margin: auto 0; /* 🚀 핵심: 화면이 남으면 알아서 위아래 여백을 줘서 중앙으로 감 */
-            padding: 100px 0 60px 0; /* 🚀 위아래 로고와 푸터에 부딪히지 않게 안전 거리 확보 */
-        }
-        .hidden { display: none !important; }
-
-        h1 { font-size: 4rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -1px; }
-        p { margin-top: 0; font-size: 1.1rem; }
-        
-        #beat-lights { display: flex; gap: 15px; margin-bottom: 10px; height: 30px; align-items: center; justify-content: center; }
-        .light { width: 12px; height: 12px; border-radius: 50%; background-color: var(--sub-text); opacity: 0.1; transition: all 0.2s ease; }
-        .light.active { background-color: var(--text-color); opacity: 1; transform: scale(1.4); box-shadow: 0 0 15px var(--text-color); }
-
-        .chord-sequence-container { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; min-height: 12rem; margin: 10px 0; }
-        .chord-item { font-weight: 700; transition: all 0.4s; white-space: nowrap; }
-        .chord-root { font-size: 1em; line-height: 1; }
-        .chord-acc { font-size: 0.6em; vertical-align: text-top; margin-left: 0.02em; }
-        .chord-quality { font-size: 0.55em; vertical-align: baseline; }
-
-        #chord-prev { font-size: 3rem; opacity: 1; width: 25%; text-align: right; }
-        #chord-current { font-size: 10rem; opacity: 1; width: 50%; text-align: center; }
-        #chord-next { font-size: 3rem; opacity: 1; width: 25%; text-align: left; }
-        
-        .controls { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px; }
-        .mode-content-wrapper { height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-
-        .mode-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--selector-bg); padding: 5px; border-radius: 30px; }
-        .mode-btn { padding: 10px 25px; border: none; background: transparent; color: var(--sub-text); cursor: pointer; font-weight: 700; font-family: 'Montserrat', sans-serif; border-radius: 25px; transition: all 0.2s ease; }
-        .mode-btn.active { background: var(--text-color); color: var(--bg-color); }
-
-        .start-btn { padding: 15px 45px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--btn-text); background-color: var(--btn-bg); border: none; border-radius: 50px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px var(--shadow); transition: all 0.3s; margin-top: 20px; }
-        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 15px var(--shadow); opacity: 0.95; }
-        .start-btn:active { transform: translateY(-1px); }
-
-        #filter-toggle-btn { background: none; border: 1px solid var(--sub-text); color: var(--sub-text); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-bottom: 15px; transition: all 0.3s; letter-spacing: 1px; }
-        #filter-toggle-btn:hover { border-color: var(--text-color); color: var(--text-color); }
-
-        #filter-panel { background: var(--selector-bg); padding: 25px; border-radius: 25px; width: 1100px; margin-bottom: 20px; transition: all 0.3s ease; display: flex; gap: 30px; text-align: left; }
-        .filter-col { flex: 1 1 200px; display: flex; flex-direction: column; min-width: 200px; }
-        .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(125,125,125,0.2); padding-bottom: 5px; }
-        .filter-group-title { font-size: 0.7rem; font-weight: 700; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; }
-
-        .chord-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
-        .chord-pill { padding: 6px 12px; border: 1px solid var(--sub-text); border-radius: 15px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; color: var(--sub-text); font-weight: 700; }
-        .chord-pill.active { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); }
-
-        .bulk-actions { display: flex; gap: 8px; }
-        .bulk-btn { background: none; border: none; color: var(--sub-text); cursor: pointer; font-size: 0.6rem; font-weight: 700; text-decoration: underline; padding: 0; }
-
-        .setting-group { display: flex; flex-direction: column; align-items: center; gap: 15px; background: var(--selector-bg); padding: 20px 30px; border-radius: 25px; width: 340px; }
-        .input-row { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: center; }
-        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(125, 125, 125, 0.2); border-radius: 5px; outline: none; margin: 10px 0; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--text-color); border-radius: 50%; cursor: pointer; transition: transform 0.2s; }
-        input[type="number"] { background: rgba(125, 125, 125, 0.1); border: 1px solid var(--sub-text); color: var(--text-color); padding: 5px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; width: 60px; border-radius: 8px; text-align: center; }
-        
-        #back-btn { margin-top: 20px; background: none; border: none; color: var(--sub-text); cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; transition: color 0.4s; }
-
-        /* --- 🎛️ 가중치 설정 패널 (수정됨) --- */
-        #weight-config-panel {
-            flex-basis: 100%;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(125, 125, 125, 0.2);
-            display: none;
-        }
-        /* 🚀 가중치 직접 입력창 디자인 (다이어트 버전) */
-        .weight-value-input {
-            width: 30px; /* 기존 35px에서 살짝 줄임 */
-            height: 18px; /* 높이를 명시해서 박스를 더 얄쌍하게 */
-            background: rgba(125, 125, 125, 0.1);
-            border: 1px solid var(--sub-text);
-            color: var(--text-color);
-            border-radius: 4px; /* 둥글기도 살짝 작게 */
-            text-align: center;
-            font-size: 0.65rem; /* 글씨 크기 축소 (기존 0.75rem) */
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400; /* 🚀 핵심: 700(Bold)에서 400(Regular)으로 변경 */
-            padding: 0; /* 불필요한 안쪽 여백 제거 */
-        }
-        
-        /* 입력창에 생기는 위아래 화살표(스피너) 숨기기 (유지) */
-        .weight-value-input::-webkit-outer-spin-button,
-        .weight-value-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .weight-row-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 가로 4칸 정렬 */
-            gap: 15px;
-            width: 100%;
-        }
-        .weight-row { display: flex; flex-direction: column; gap: 5px; }
-        .weight-label { font-size: 0.75rem; font-weight: 700; color: var(--sub-text); }
-        .weight-slider-wrapper { display: flex; align-items: center; gap: 10px; }
-        .weight-slider-wrapper input { margin: 0; }
-        .weight-value { font-size: 0.8rem; font-weight: 700; min-width: 25px; color: var(--text-color); }
-        
-        #weight-toggle-btn {
-            background: none; border: none; color: var(--sub-text);
-            cursor: pointer; font-size: 0.7rem; font-weight: 700;
-            text-decoration: underline; padding: 0; transition: color 0.3s;
-            margin-top: 15px; align-self: flex-end;
-        }
-        #weight-toggle-btn:hover { color: var(--text-color); }
-
-        /* --- 📱 모바일 버전 (850px 이하 화면에서만 발동) --- */
-        @media (max-width: 850px) {
-            body {
-                height: auto;
-                min-height: 100vh;
-                overflow-y: auto; /* 세로 스크롤 생성 */
-                padding: 80px 10px 40px 10px; /* 로고와 푸터 여백 */
-            }
-
-            section {
-                margin: 0; /* PC에서 준 margin: auto를 해제 */
-                padding: 20px 0; /* 위쪽 100px 여백도 모바일은 좁으니까 20px로 줄임 */
-            }
-
-            #top-logo { display: none !important; }
-            .theme-toggle { top: 20px; right: 15px; padding: 8px 16px; font-size: 0.7rem; }
-            
-            #signin-btn {
-                right: auto !important; /* 기존에 오른쪽으로 190px 당기던 힘을 무력화 */
-                left: 15px !important;  /* 왼쪽에서 15px 띄워서 로고 자리에 안착 */
-            }
-            h1 { font-size: 2.2rem; margin-top: 20px; }
-            
-            /* 필터 패널이 모바일에서 세로로 예쁘게 쌓이도록 */
-            #filter-panel {
-                width: 90%;
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            
-            /* 코드 글자 크기 축소 */
-            #chord-current { font-size: 4.5rem; width: 100%; }
-            #chord-prev, #chord-next { font-size: 1.5rem; width: 25%; }
-            .chord-sequence-container { min-height: 8rem; gap: 5px; }
-            
-            .setting-group { width: 90%; padding: 20px 15px; }
-            .mode-content-wrapper { height: auto; min-height: 150px; }
-        }
-        #top-bar-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 80px;
-            background-color: var(--bg-color);
-            z-index: 990; /* 로고와 버튼(1000) 바로 뒤에 배치 */
-            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="top-bar-bg"></div> <div id="top-logo">PracticeChords.io</div>
-    
+    <div id="top-bar-bg"></div>
     <div id="top-logo">PracticeChords.io</div>
     <button class="theme-toggle" id="theme-btn">LIGHT MODE</button>
     <button class="theme-toggle" id="signin-btn" onclick="handleAuth()" style="right: 190px;">SIGN IN</button>
-    
+
     <section id="home-screen">
         <h1>PracticeChords.io</h1>
         <p>Master your chord sight-reading</p>
@@ -266,7 +51,7 @@
         </div>
 
         <button id="filter-toggle-btn">CHORD SELECTION</button>
-        
+
         <div id="filter-panel" class="hidden" style="flex-wrap: wrap;">
             <div class="filter-col">
                 <div class="filter-header">
@@ -326,9 +111,9 @@
                     <div class="chord-pill" data-val="7sus4">7sus4</div>
                     <div class="chord-pill" data-val="mM7">mM7</div>
                 </div>
-                
+
             </div>
-            
+
             <div class="filter-col">
                 <div class="filter-header">
                     <span class="filter-group-title">Extensions</span>
@@ -351,7 +136,7 @@
                 <button id="weight-toggle-btn" style="margin-top: 40px; align-self: flex-end;"> ADVANCED WEIGHTS ▾</button>
 
             </div>
-            
+
             <div id="weight-config-panel">
                 <div class="weight-row-container" id="weight-sliders-container"></div>
             </div>
@@ -364,7 +149,7 @@
             <div id="chord-current" class="chord-item">C</div>
             <div id="chord-next" class="chord-item"></div>
         </div>
-        
+
         <div class="controls">
             <div class="mode-content-wrapper">
                 <div id="tempo-controls" class="hidden">
@@ -398,428 +183,10 @@
         </div>
     </div>
 
-    <script>
-        const themeBtn = document.getElementById('theme-btn');
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            themeBtn.innerText = document.body.classList.contains('light-mode') ? 'DARK MODE' : 'LIGHT MODE';
-        });
+    <!-- 🎵 메인 앱 로직 (코드 엔진, 메트로놈, UI) -->
+    <script src="app.js"></script>
 
-        document.getElementById('top-logo').addEventListener('click', () => {
-            stop(); 
-            document.getElementById('practice-screen').classList.add('hidden');
-            document.getElementById('home-screen').classList.remove('hidden');
-        });
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playClick(isFirst) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(isFirst ? 1200 : 800, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.connect(g); g.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        }
-
-        let activeRoots = ['C', 'C#', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-        let activeTypes = ['maj7', '7', 'm7'];
-        
-        let currentChord = "", nextChord = "", prevChord = "";
-
-        const filterPanel = document.getElementById('filter-panel');
-        const chordPills = document.querySelectorAll('.chord-pill');
-
-        chordPills.forEach(pill => {
-            pill.addEventListener('click', () => { pill.classList.toggle('active'); updateFilters(); });
-        });
-
-        function updateFilters() {
-            activeRoots = [];
-            document.querySelectorAll('#root-pills .chord-pill.active').forEach(p => activeRoots.push(...p.getAttribute('data-root').split(',')));
-            activeTypes = [];
-            document.querySelectorAll('.chord-pill.active[data-val]').forEach(p => activeTypes.push(p.getAttribute('data-val')));
-            
-            // 패널이 열려있다면 슬라이더도 실시간 새로고침
-            if (weightConfigPanel && weightConfigPanel.style.display === 'block') {
-                renderWeightSliders();
-            }
-        }
-
-        document.getElementById('base-all-btn').addEventListener('click', () => { document.querySelectorAll('#root-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
-        document.getElementById('base-clr-btn').addEventListener('click', () => { document.querySelectorAll('#root-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
-        document.getElementById('triad-all-btn').addEventListener('click', () => { document.querySelectorAll('#triad-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
-        document.getElementById('triad-clr-btn').addEventListener('click', () => { document.querySelectorAll('#triad-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
-        document.getElementById('seventh-all-btn').addEventListener('click', () => { document.querySelectorAll('#seventh-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
-        document.getElementById('seventh-clr-btn').addEventListener('click', () => { document.querySelectorAll('#seventh-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
-        document.getElementById('ext-all-btn').addEventListener('click', () => { document.querySelectorAll('#ext-pills .chord-pill').forEach(p => p.classList.add('active')); updateFilters(); });
-        document.getElementById('ext-clr-btn').addEventListener('click', () => { document.querySelectorAll('#ext-pills .chord-pill').forEach(p => p.classList.remove('active')); updateFilters(); });
-        document.getElementById('filter-toggle-btn').addEventListener('click', () => filterPanel.classList.toggle('hidden'));
-
-        function checkSelection() {
-            if (activeRoots.length === 0 || activeTypes.length === 0) {
-                alert("Please select at least one Base and one Chord Type to start practicing!");
-                return false;
-            }
-            return true;
-        }
-
-        function formatChordHTML(chordStr) {
-            if (!chordStr) return "";
-            if (chordStr === "---") return `<span class="chord-root">---</span>`;
-
-            const root = chordStr.charAt(0);
-            let acc = ""; let quality = ""; let rest = chordStr.slice(1);
-
-            if (rest.startsWith('#') || rest.startsWith('b')) {
-                acc = rest.charAt(0) === 'b' ? '♭' : '♯'; quality = rest.slice(1);
-            } else { quality = rest; }
-
-            if (quality === "M") quality = ""; 
-
-            let accTag = acc ? `<span class="chord-acc">${acc}</span>` : '';
-            let qMargin = acc ? '-0.05em' : '0.05em';
-            let qStyle = quality ? ` style="margin-left: ${qMargin};"` : '';
-            let qTag = quality ? `<span class="chord-quality"${qStyle}>${quality}</span>` : '';
-
-            return `<span class="chord-root">${root}</span>${accTag}${qTag}`;
-        }
-
-        // --- 🎛️ 가중치 데이터 초기 설정 ---
-        let chordWeights = {
-            '': 100, 'm': 100, 'dim': 10, 'aug': 10, 'sus4': 30,
-            'maj7': 100, '7': 100, 'm7': 100, 'm7b5': 40, 'dim7': 20, '7sus4': 30, 'mM7': 10,
-            // 🚀 새로운 텐션들 추가 (초기 점수는 10점 셋팅)
-            'maj9': 10, 'm9': 10, 'm11': 10, '9': 10, '13': 10, 
-            '7(b9)': 10, '7(#9)': 10, '7alt': 10
-        };
-
-        const chordDisplayNames = {'': 'M', 'm': 'm', 'dim': 'dim', 'aug': 'aug', 'sus4': 'sus4', 'maj7': 'maj7', '7': '7', 'm7': 'm7', 'm7b5': 'm7(b5)', 'dim7': 'dim7', '7sus4': '7sus4', 'mM7': 'mM7', 'maj9': 'maj9', 'm9': 'm9', 'm11': 'm11', '9': '9', '13': '13', 
-            '7(b9)': '7(b9)', '7(#9)': '7(#9)', '7alt': '7alt'};
-
-        // --- 기존 무작위 함수를 가중치 함수로 교체 ---
-        function generateOneChord() {
-            if (activeRoots.length === 0 || activeTypes.length === 0) return "---";
-            const r = activeRoots[Math.floor(Math.random() * activeRoots.length)];
-            
-            // 1. 활성화된 코드들의 가중치 총합 계산
-            let totalWeight = 0;
-            activeTypes.forEach(type => { totalWeight += chordWeights[type]; });
-
-            // (예외 처리) 모든 가중치가 0이면 1/n 무작위 처리
-            if (totalWeight === 0) {
-                let t = activeTypes[Math.floor(Math.random()*activeTypes.length)];
-                if (t === "m7b5") t = "m7(b5)";
-                return r + t;
-            }
-
-            // 2. 가중치 기반 랜덤 뽑기
-            let randomNum = Math.random() * totalWeight;
-            let selectedType = activeTypes[0];
-
-            for (let type of activeTypes) {
-                let weight = chordWeights[type];
-                if (randomNum < weight) {
-                    selectedType = type;
-                    break;
-                }
-                randomNum -= weight;
-            }
-
-            let t = selectedType;
-            if (t === "m7b5") t = "m7(b5)";
-            return r + t;
-        }
-
-        // --- ⚙️ 아코디언 열기/닫기 및 슬라이더 생성 로직 ---
-        const weightToggleBtn = document.getElementById('weight-toggle-btn');
-        const weightConfigPanel = document.getElementById('weight-config-panel');
-        const weightSlidersContainer = document.getElementById('weight-sliders-container');
-
-        weightToggleBtn.addEventListener('click', () => {
-            if (weightConfigPanel.style.display === 'block') {
-                weightConfigPanel.style.display = 'none';
-                weightToggleBtn.innerText = ' ADVANCED WEIGHTS ▾';
-            } else {
-                weightConfigPanel.style.display = 'block';
-                weightToggleBtn.innerText = ' CLOSE SETTINGS ▴';
-                renderWeightSliders();
-            }
-        });
-
-        function renderWeightSliders() {
-            weightSlidersContainer.innerHTML = ''; // 초기화
-            
-            if (activeTypes.length === 0) return; // 켜진 코드가 없으면 중지
-
-            activeTypes.forEach(type => {
-                const div = document.createElement('div');
-                div.className = 'weight-row';
-                // 🚀 span 태그를 input 태그로 변경
-                div.innerHTML = `
-                    <span class="weight-label">${chordDisplayNames[type]}</span>
-                    <div class="weight-slider-wrapper">
-                        <input type="range" class="weight-slider" min="0" max="100" value="${chordWeights[type]}" data-type="${type}">
-                        <input type="number" class="weight-value-input" min="0" max="100" value="${chordWeights[type]}" data-type="${type}">
-                    </div>
-                `;
-                weightSlidersContainer.appendChild(div);
-            });
-
-            // 🚀 슬라이더와 입력창 서로 동기화시키기
-            const rows = weightSlidersContainer.querySelectorAll('.weight-slider-wrapper');
-            
-            rows.forEach(wrapper => {
-                const slider = wrapper.querySelector('.weight-slider');
-                const numInput = wrapper.querySelector('.weight-value-input');
-                const type = slider.getAttribute('data-type');
-
-                // 1) 슬라이더를 움직일 때 -> 입력창 숫자 변경
-                slider.addEventListener('input', (e) => {
-                    const val = parseInt(e.target.value);
-                    numInput.value = val;
-                    chordWeights[type] = val;
-                });
-
-                // 2) 숫자를 직접 입력할 때 -> 슬라이더 위치 변경
-                numInput.addEventListener('change', (e) => {
-                    let val = parseInt(e.target.value);
-                    
-                    // 이상한 문자나 범위를 벗어난 숫자 방어 로직
-                    if (isNaN(val)) val = 50; 
-                    if (val < 0) val = 0;
-                    if (val > 100) val = 100;
-                    
-                    e.target.value = val; // 교정된 숫자를 창에 다시 띄움
-                    slider.value = val;   // 슬라이더 바도 이동시킴
-                    chordWeights[type] = val;
-                });
-            });
-        }
-
-        function updateChordSequence() {
-            prevChord = currentChord; currentChord = nextChord; nextChord = generateOneChord();
-            document.getElementById('chord-prev').innerHTML = formatChordHTML(prevChord);
-            document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
-            document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
-        }
-
-        function initChords() {
-            prevChord = ""; currentChord = generateOneChord(); nextChord = generateOneChord();
-            document.getElementById('chord-prev').innerHTML = "";
-            document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
-            document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
-        }
-
-        let isPlaying = false, tempoInterval = null, currentBeat = 0, currentMode = 'TAP';
-        const bpmInput = document.getElementById('bpm-input'), bpmSlider = document.getElementById('bpm-slider'), beatsInput = document.getElementById('beats-input'), playBtn = document.getElementById('play-pause-btn');
-
-        let lastValidBPM = 80;
-        function getSafeBPM() {
-            let bpm = parseInt(bpmInput.value);
-            if (isNaN(bpm)) bpm = lastValidBPM;
-            if (bpm < 40) bpm = 40; if (bpm > 240) bpm = 240;
-            bpmInput.value = bpm; bpmSlider.value = bpm; lastValidBPM = bpm; return bpm;
-        }
-
-        let lastValidBeats = 4;
-        function getSafeBeats() {
-            let b = parseInt(beatsInput.value);
-            if (isNaN(b)) b = lastValidBeats;
-            if (b < 1) b = 1; if (b > 4) b = 4;
-            beatsInput.value = b; lastValidBeats = b; return b;
-        }
-
-        function tick() {
-            let bpc = getSafeBeats();
-            if (bpc < 1) { playClick(false); return; }
-            playClick(currentBeat === 0);
-            if (currentBeat === 0) updateChordSequence();
-            document.querySelectorAll('.light').forEach((l, i) => l.classList.toggle('active', i === currentBeat));
-            currentBeat = (currentBeat + 1) % bpc;
-        }
-
-        bpmSlider.addEventListener('input', () => { 
-            bpmInput.value = bpmSlider.value; lastValidBPM = parseInt(bpmSlider.value);
-            if (isPlaying) { clearInterval(tempoInterval); tempoInterval = setInterval(tick, (60 / lastValidBPM) * 1000); } 
-        });
-
-        bpmInput.addEventListener('change', () => { 
-            let bpm = getSafeBPM();
-            if (isPlaying) { clearInterval(tempoInterval); tempoInterval = setInterval(tick, (60 / bpm) * 1000); } 
-        });
-
-        beatsInput.addEventListener('change', () => { 
-            getSafeBeats(); currentBeat = 0; 
-            if (isPlaying) { clearInterval(tempoInterval); tick(); tempoInterval = setInterval(tick, (60 / lastValidBPM) * 1000); } 
-            createLights(); 
-        });
-
-        function createLights() {
-            const lightsContainer = document.getElementById('beat-lights'); lightsContainer.innerHTML = '';
-            let count = currentMode === 'TAP' ? 4 : getSafeBeats();
-            for (let i = 0; i < count; i++) {
-                const div = document.createElement('div'); div.className = 'light';
-                if (currentMode === 'TAP') div.style.opacity = "0"; 
-                lightsContainer.appendChild(div);
-            }
-        }
-
-        document.getElementById('tap-mode-btn').addEventListener('click', (e) => { currentMode = 'TAP'; stop(); e.target.classList.add('active'); document.getElementById('tempo-mode-btn').classList.remove('active'); document.getElementById('tempo-controls').classList.add('hidden'); document.getElementById('tap-controls').classList.remove('hidden'); createLights(); });
-        document.getElementById('tempo-mode-btn').addEventListener('click', (e) => { currentMode = 'TEMPO'; e.target.classList.add('active'); document.getElementById('tap-mode-btn').classList.remove('active'); document.getElementById('tempo-controls').classList.remove('hidden'); document.getElementById('tap-controls').classList.add('hidden'); createLights(); });
-        
-        document.getElementById('start-btn-home').addEventListener('click', () => { 
-            if (!checkSelection()) return; 
-            document.getElementById('home-screen').classList.add('hidden'); document.getElementById('practice-screen').classList.remove('hidden'); 
-            initChords(); createLights(); 
-        });
-
-        function stop() { clearInterval(tempoInterval); isPlaying = false; currentBeat = 0; playBtn.innerText = 'Play'; document.querySelectorAll('.light').forEach(l => l.classList.remove('active')); }
-        
-        playBtn.addEventListener('click', () => { 
-            if (isPlaying) stop(); 
-            else { 
-                if (!checkSelection()) return; 
-                let bpm = getSafeBPM(); isPlaying = true; playBtn.innerText = 'Stop'; currentBeat = 0; tick(); 
-                tempoInterval = setInterval(tick, (60 / bpm) * 1000); 
-            } 
-        });
-
-        document.getElementById('next-btn').addEventListener('click', () => { if (!checkSelection()) return; updateChordSequence(); });
-        
-        window.addEventListener('keydown', (e) => { 
-            if (e.code === 'Space') {
-                if (document.activeElement && document.activeElement.tagName === 'BUTTON') document.activeElement.blur();
-                if (!document.getElementById('practice-screen').classList.contains('hidden')) {
-                    e.preventDefault(); 
-                    if (currentMode === 'TAP') { if(checkSelection()) document.getElementById('next-btn').click(); } 
-                    else if (currentMode === 'TEMPO') { document.getElementById('play-pause-btn').click(); }
-                }
-            }
-        });
-
-        document.getElementById('back-btn').addEventListener('click', () => { stop(); document.getElementById('practice-screen').classList.add('hidden'); document.getElementById('home-screen').classList.remove('hidden'); });
-
-        // PWA 서비스 워커 등록
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker Registered'));
-        }
-
-        // --- 화면 빈 공간 클릭 시 작동 ---
-document.addEventListener('click', (e) => {
-    // 1. 연습 화면이 아닐 때(홈 화면일 때)는 무시합니다.
-    if (document.getElementById('practice-screen').classList.contains('hidden')) return;
-
-    // 2. 클릭한 곳이 '조작부'인지 확인합니다. (매우 중요!)
-    // 만약 버튼, BPM 입력창, 필터 패널, 상단 로고 등을 클릭했을 때는 코드가 넘어가면 안 되므로 방지합니다.
-    const isInteractiveElement = e.target.closest('button, input, a, #filter-panel, .mode-selector, #top-logo, #top-bar-bg, .setting-group, #footer-area');
-    if (isInteractiveElement) return;
-
-    // 3. 빈 공간을 클릭했다면, 현재 모드에 맞게 실행합니다.
-    // 기존에 만들어두신 스페이스바 이벤트와 동일한 원리입니다.
-    if (currentMode === 'TAP') {
-        if (checkSelection()) document.getElementById('next-btn').click();
-    } else if (currentMode === 'TEMPO') {
-        // TEMPO 모드에서는 플레이/정지 토글
-        document.getElementById('play-pause-btn').click();
-    }
-});
-    </script>
-    <script type="module">
-  // 1. 필요한 Firebase 라이브러리 불러오기
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-  // 2. 본인의 Firebase 설정
-  const firebaseConfig = {
-    apiKey: "AIzaSyCk7MXi47DNq7K7PhFIr5BT4uBwC39N_h8",
-    authDomain: "practicechords.io",
-    projectId: "practice-chords",
-    storageBucket: "practice-chords.firebasestorage.app",
-    messagingSenderId: "823815682850",
-    appId: "1:823815682850:web:4097954afe623c7671437b",
-    measurementId: "G-GDNV4ZCVQ4"
-  };
-
-  // 3. Firebase 초기화
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  
-  // 구글 제공업체 설정 (무조건 계정 선택 창 띄우기 추가!)
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({
-    prompt: 'select_account'
-  });
-
-  // 4. 구글 로그인/로그아웃 함수
-  window.handleAuth = () => {
-    if (!auth.currentUser) {
-      // 로그인 안 된 상태면 팝업 띄우기
-      signInWithPopup(auth, provider)
-        .then((result) => alert("Signed in successfully!"))
-        .catch((error) => console.error("Sign-in failed.:", error));
-    } else {
-      // 로그인 된 상태면 로그아웃
-      signOut(auth).then(() => alert("Signed out successfully."));
-    }
-  };
-
-  // =====================================================================
-  // ⏰ 5분 자동 로그아웃 로직 (순수 자바스크립트 버전)
-  // =====================================================================
-  const TIMEOUT_MS = 5 * 60 * 1000; // 5분 = 300,000 밀리초
-
-  const checkSessionTimeout = () => {
-    const lastActive = localStorage.getItem("lastActiveTime");
-    
-    if (lastActive) {
-      const timePassed = Date.now() - parseInt(lastActive, 10);
-      
-      if (timePassed > TIMEOUT_MS) {
-        signOut(auth).then(() => {
-          localStorage.removeItem("lastActiveTime");
-          alert("Signed out due to inactivity (5 minutes).");
-          window.location.reload(); // 쫓아내고 새로고침
-        }).catch((error) => console.error(error));
-      }
-    }
-  };
-
-  const updateActivityTime = () => {
-    if (auth.currentUser) { 
-      localStorage.setItem("lastActiveTime", Date.now().toString());
-    }
-  };
-
-  // 접속 시 시간 체크
-  checkSessionTimeout();
-
-  // 움직임 감지 시 시간 갱신
-  window.addEventListener("mousemove", updateActivityTime);
-  window.addEventListener("keydown", updateActivityTime);
-  window.addEventListener("click", updateActivityTime);
-  window.addEventListener("beforeunload", updateActivityTime);
-  // =====================================================================
-
-
-  // 5. 로그인 상태 감시 및 버튼 UI 변경
-  const signinBtn = document.getElementById('signin-btn');
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // 로그인 성공 시
-      signinBtn.innerText = `${user.displayName.split(' ')[0]} (SIGN OUT)`;
-      updateActivityTime(); // 타이머 시작
-    } else {
-      // 로그아웃 상태 시
-      signinBtn.innerText = "SIGN IN";
-      localStorage.removeItem("lastActiveTime"); // 타이머 기록 삭제
-    }
-  });
-</script>
+    <!-- 🔐 Firebase 인증 (구글 로그인) -->
+    <script type="module" src="auth.js"></script>
 </body>
 </html>

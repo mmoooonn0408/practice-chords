@@ -1,0 +1,210 @@
+:root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --btn-bg: #ffffff;
+    --btn-text: #000000;
+    --sub-text: #aaaaaa;
+    --shadow: rgba(255, 255, 255, 0.12);
+    --selector-bg: rgba(125, 125, 125, 0.15);
+}
+
+body.light-mode {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --btn-bg: #000000;
+    --btn-text: #ffffff;
+    --sub-text: #666666;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --selector-bg: rgba(0, 0, 0, 0.05);
+}
+
+/* --- 💻 PC 버전 (원래 코드 완벽 복구: 건드리지 않음) --- */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+#top-logo {
+    position: fixed; top: 30px; left: 30px; font-size: 1.5rem; font-weight: 700;
+    cursor: pointer; letter-spacing: -1px; z-index: 1000;
+    transition: opacity 0.3s ease, color 0.5s;
+}
+#top-logo:hover { opacity: 0.6; }
+
+.theme-toggle {
+    position: fixed; top: 30px; right: 30px; padding: 10px 22px; cursor: pointer;
+    border: 2px solid var(--text-color); background: transparent; color: var(--text-color);
+    border-radius: 30px; font-weight: 700; font-size: 0.8rem; z-index: 1000;
+    transition: all 0.4s;
+}
+.theme-toggle:hover { background-color: var(--text-color); color: var(--bg-color); }
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: auto 0; /* 🚀 핵심: 화면이 남으면 알아서 위아래 여백을 줘서 중앙으로 감 */
+    padding: 100px 0 60px 0; /* 🚀 위아래 로고와 푸터에 부딪히지 않게 안전 거리 확보 */
+}
+.hidden { display: none !important; }
+
+h1 { font-size: 4rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -1px; }
+p { margin-top: 0; font-size: 1.1rem; }
+
+#beat-lights { display: flex; gap: 15px; margin-bottom: 10px; height: 30px; align-items: center; justify-content: center; }
+.light { width: 12px; height: 12px; border-radius: 50%; background-color: var(--sub-text); opacity: 0.1; transition: all 0.2s ease; }
+.light.active { background-color: var(--text-color); opacity: 1; transform: scale(1.4); box-shadow: 0 0 15px var(--text-color); }
+
+.chord-sequence-container { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; min-height: 12rem; margin: 10px 0; }
+.chord-item { font-weight: 700; transition: all 0.4s; white-space: nowrap; }
+.chord-root { font-size: 1em; line-height: 1; }
+.chord-acc { font-size: 0.6em; vertical-align: text-top; margin-left: 0.02em; }
+.chord-quality { font-size: 0.55em; vertical-align: baseline; }
+
+#chord-prev { font-size: 3rem; opacity: 1; width: 25%; text-align: right; }
+#chord-current { font-size: 10rem; opacity: 1; width: 50%; text-align: center; }
+#chord-next { font-size: 3rem; opacity: 1; width: 25%; text-align: left; }
+
+.controls { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px; }
+.mode-content-wrapper { height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+
+.mode-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--selector-bg); padding: 5px; border-radius: 30px; }
+.mode-btn { padding: 10px 25px; border: none; background: transparent; color: var(--sub-text); cursor: pointer; font-weight: 700; font-family: 'Montserrat', sans-serif; border-radius: 25px; transition: all 0.2s ease; }
+.mode-btn.active { background: var(--text-color); color: var(--bg-color); }
+
+.start-btn { padding: 15px 45px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--btn-text); background-color: var(--btn-bg); border: none; border-radius: 50px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px var(--shadow); transition: all 0.3s; margin-top: 20px; }
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 15px var(--shadow); opacity: 0.95; }
+.start-btn:active { transform: translateY(-1px); }
+
+#filter-toggle-btn { background: none; border: 1px solid var(--sub-text); color: var(--sub-text); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-bottom: 15px; transition: all 0.3s; letter-spacing: 1px; }
+#filter-toggle-btn:hover { border-color: var(--text-color); color: var(--text-color); }
+
+#filter-panel { background: var(--selector-bg); padding: 25px; border-radius: 25px; width: 1100px; margin-bottom: 20px; transition: all 0.3s ease; display: flex; gap: 30px; text-align: left; }
+.filter-col { flex: 1 1 200px; display: flex; flex-direction: column; min-width: 200px; }
+.filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(125,125,125,0.2); padding-bottom: 5px; }
+.filter-group-title { font-size: 0.7rem; font-weight: 700; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; }
+
+.chord-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
+.chord-pill { padding: 6px 12px; border: 1px solid var(--sub-text); border-radius: 15px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; color: var(--sub-text); font-weight: 700; }
+.chord-pill.active { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); }
+
+.bulk-actions { display: flex; gap: 8px; }
+.bulk-btn { background: none; border: none; color: var(--sub-text); cursor: pointer; font-size: 0.6rem; font-weight: 700; text-decoration: underline; padding: 0; }
+
+.setting-group { display: flex; flex-direction: column; align-items: center; gap: 15px; background: var(--selector-bg); padding: 20px 30px; border-radius: 25px; width: 340px; }
+.input-row { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: center; }
+input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(125, 125, 125, 0.2); border-radius: 5px; outline: none; margin: 10px 0; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--text-color); border-radius: 50%; cursor: pointer; transition: transform 0.2s; }
+input[type="number"] { background: rgba(125, 125, 125, 0.1); border: 1px solid var(--sub-text); color: var(--text-color); padding: 5px; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; width: 60px; border-radius: 8px; text-align: center; }
+
+#back-btn { margin-top: 20px; background: none; border: none; color: var(--sub-text); cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; transition: color 0.4s; }
+
+/* --- 🎛️ 가중치 설정 패널 (수정됨) --- */
+#weight-config-panel {
+    flex-basis: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(125, 125, 125, 0.2);
+    display: none;
+}
+/* 🚀 가중치 직접 입력창 디자인 (다이어트 버전) */
+.weight-value-input {
+    width: 30px; /* 기존 35px에서 살짝 줄임 */
+    height: 18px; /* 높이를 명시해서 박스를 더 얄쌍하게 */
+    background: rgba(125, 125, 125, 0.1);
+    border: 1px solid var(--sub-text);
+    color: var(--text-color);
+    border-radius: 4px; /* 둥글기도 살짝 작게 */
+    text-align: center;
+    font-size: 0.65rem; /* 글씨 크기 축소 (기존 0.75rem) */
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400; /* 🚀 핵심: 700(Bold)에서 400(Regular)으로 변경 */
+    padding: 0; /* 불필요한 안쪽 여백 제거 */
+}
+
+/* 입력창에 생기는 위아래 화살표(스피너) 숨기기 (유지) */
+.weight-value-input::-webkit-outer-spin-button,
+.weight-value-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.weight-row-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 가로 4칸 정렬 */
+    gap: 15px;
+    width: 100%;
+}
+.weight-row { display: flex; flex-direction: column; gap: 5px; }
+.weight-label { font-size: 0.75rem; font-weight: 700; color: var(--sub-text); }
+.weight-slider-wrapper { display: flex; align-items: center; gap: 10px; }
+.weight-slider-wrapper input { margin: 0; }
+.weight-value { font-size: 0.8rem; font-weight: 700; min-width: 25px; color: var(--text-color); }
+
+#weight-toggle-btn {
+    background: none; border: none; color: var(--sub-text);
+    cursor: pointer; font-size: 0.7rem; font-weight: 700;
+    text-decoration: underline; padding: 0; transition: color 0.3s;
+    margin-top: 15px; align-self: flex-end;
+}
+#weight-toggle-btn:hover { color: var(--text-color); }
+
+/* --- 📱 모바일 버전 (850px 이하 화면에서만 발동) --- */
+@media (max-width: 850px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto; /* 세로 스크롤 생성 */
+        padding: 80px 10px 40px 10px; /* 로고와 푸터 여백 */
+    }
+
+    section {
+        margin: 0; /* PC에서 준 margin: auto를 해제 */
+        padding: 20px 0; /* 위쪽 100px 여백도 모바일은 좁으니까 20px로 줄임 */
+    }
+
+    #top-logo { display: none !important; }
+    .theme-toggle { top: 20px; right: 15px; padding: 8px 16px; font-size: 0.7rem; }
+
+    #signin-btn {
+        right: auto !important; /* 기존에 오른쪽으로 190px 당기던 힘을 무력화 */
+        left: 15px !important;  /* 왼쪽에서 15px 띄워서 로고 자리에 안착 */
+    }
+    h1 { font-size: 2.2rem; margin-top: 20px; }
+
+    /* 필터 패널이 모바일에서 세로로 예쁘게 쌓이도록 */
+    #filter-panel {
+        width: 90%;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    /* 코드 글자 크기 축소 */
+    #chord-current { font-size: 4.5rem; width: 100%; }
+    #chord-prev, #chord-next { font-size: 1.5rem; width: 25%; }
+    .chord-sequence-container { min-height: 8rem; gap: 5px; }
+
+    .setting-group { width: 90%; padding: 20px 15px; }
+    .mode-content-wrapper { height: auto; min-height: 150px; }
+}
+#top-bar-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 80px;
+    background-color: var(--bg-color);
+    z-index: 990; /* 로고와 버튼(1000) 바로 뒤에 배치 */
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
