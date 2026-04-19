@@ -135,10 +135,11 @@ window.addEventListener('user-settings-loaded', (e) => {
             });
         }
         // 3) Chord type pill 복원 (Triads / 7ths / Extensions 전체)
+        //    ⚠️ 범위를 #filter-panel 안으로 제한 — voicing 화면의 M pill(data-val="M")은 건드리지 않음
         if (Array.isArray(settings.selectedTypes)) {
-            document.querySelectorAll('.chord-pill[data-val]').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('#filter-panel .chord-pill[data-val]').forEach(p => p.classList.remove('active'));
             settings.selectedTypes.forEach(val => {
-                const p = document.querySelector(`.chord-pill[data-val="${val}"]`);
+                const p = document.querySelector(`#filter-panel .chord-pill[data-val="${val}"]`);
                 if (p) p.classList.add('active');
             });
         }
@@ -926,10 +927,22 @@ function highlightSelectedVoicingIfAny() {
     refreshKeyboardVisual();
 }
 
+// 현재 voicingSelectedQuality / voicingRootSemitone에 맞게 pill active 상태 동기화
+// (외부 이벤트로 active가 꺼지는 경우에 대한 방어)
+function syncVoicingPillActiveState() {
+    document.querySelectorAll('.voicing-quality-group .chord-pill').forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-val') === voicingSelectedQuality);
+    });
+    document.querySelectorAll('#voicing-root-pills .chord-pill').forEach(p => {
+        p.classList.toggle('active', parseInt(p.getAttribute('data-semitone')) === voicingRootSemitone);
+    });
+}
+
 // --- 화면 전환 ---
 document.getElementById('voicing-btn-home').addEventListener('click', () => {
     document.getElementById('home-screen').classList.add('hidden');
     document.getElementById('voicing-screen').classList.remove('hidden');
+    syncVoicingPillActiveState(); // 🛡️ 진입 시 pill 상태 재확인
     buildPianoKeyboard();
     refreshKeyboardVisual();
     updateVoicingLabel();
