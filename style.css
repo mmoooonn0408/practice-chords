@@ -165,12 +165,13 @@ p { margin-top: 0; font-size: 1.1rem; }
 .history-entry-chord {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     color: var(--text-color);
 }
 .history-entry-time {
     font-size: 0.75rem;
     color: var(--sub-text);
+    margin-left: auto; /* 시간은 오른쪽 끝에 붙게 */
 }
 
 #filter-panel { background: var(--selector-bg); padding: 25px; border-radius: 25px; width: 1100px; margin-bottom: 20px; transition: all 0.3s ease; display: flex; gap: 30px; text-align: left; }
