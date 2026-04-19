@@ -42,7 +42,7 @@
         <h1>PracticeChords.io</h1>
         <p>Master your chord sight-reading</p>
         <button class="start-btn" id="start-btn-home">Start Practice</button>
-        <button class="start-btn" id="voicing-btn-home" style="margin-top: 15px; background: transparent; color: var(--text-color); border: 2px solid var(--text-color); box-shadow: none;">Voicing Library</button>
+        <button class="start-btn" id="voicing-btn-home" style="margin-top: 15px; background: transparent; color: var(--text-color); border: 2px solid var(--text-color); box-shadow: none; box-sizing: border-box; padding: 13px 43px;">Voicing Library</button>
     </section>
 
     <section id="practice-screen" class="hidden">
@@ -167,7 +167,7 @@
                     </div>
                 </div>
                 <div id="tap-controls">
-                    <p id="tap-guide" style="font-size: 1rem; color: var(--sub-text); margin-bottom: 10px;">Press Space or Click for next</p>
+                    <p id="tap-guide" style="font-size: 1rem; color: var(--sub-text); margin-bottom: 10px;">Hit Space or Click for next</p>
                     <button class="start-btn" id="next-btn" style="margin-top: 5px;">Next Chord</button>
                 </div>
             </div>
@@ -179,36 +179,13 @@
         <h2 style="font-size: 2rem; margin-bottom: 5px;">Voicing Library</h2>
         <p style="font-size: 0.9rem; color: var(--sub-text); margin-bottom: 20px;">Build your personal voicing vocabulary across all keys</p>
 
-        <!-- 퀄리티 + 루트 선택 -->
-        <div id="voicing-selectors">
-            <div class="voicing-selector-group">
-                <span class="voicing-selector-label">Chord Quality</span>
-                <div class="chord-pills" id="voicing-quality-pills">
-                    <div class="chord-pill active" data-val="">M</div>
-                    <div class="chord-pill" data-val="m">m</div>
-                    <div class="chord-pill" data-val="dim">dim</div>
-                    <div class="chord-pill" data-val="aug">aug</div>
-                    <div class="chord-pill" data-val="sus4">sus4</div>
-                    <div class="chord-pill" data-val="maj7">maj7</div>
-                    <div class="chord-pill" data-val="7">7</div>
-                    <div class="chord-pill" data-val="m7">m7</div>
-                    <div class="chord-pill" data-val="m7b5">m7(b5)</div>
-                    <div class="chord-pill" data-val="dim7">dim7</div>
-                    <div class="chord-pill" data-val="7sus4">7sus4</div>
-                    <div class="chord-pill" data-val="mM7">mM7</div>
-                    <div class="chord-pill" data-val="maj9">maj9</div>
-                    <div class="chord-pill" data-val="m9">m9</div>
-                    <div class="chord-pill" data-val="m11">m11</div>
-                    <div class="chord-pill" data-val="9">9</div>
-                    <div class="chord-pill" data-val="13">13</div>
-                    <div class="chord-pill" data-val="7(b9)">7(b9)</div>
-                    <div class="chord-pill" data-val="7(#9)">7(#9)</div>
-                    <div class="chord-pill" data-val="7alt">7alt</div>
+        <!-- 퀄리티 + 루트 선택 — Base / Triads / 7th Chords / Extensions 4칼럼 구조 -->
+        <div id="voicing-selectors" class="filter-panel-layout" style="flex-wrap: wrap;">
+            <!-- Base (루트 키) -->
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">Base</span>
                 </div>
-            </div>
-
-            <div class="voicing-selector-group">
-                <span class="voicing-selector-label">Root (display key)</span>
                 <div class="chord-pills" id="voicing-root-pills">
                     <div class="chord-pill active" data-semitone="0">C</div>
                     <div class="chord-pill" data-semitone="1">C#/Db</div>
@@ -222,6 +199,53 @@
                     <div class="chord-pill" data-semitone="9">A</div>
                     <div class="chord-pill" data-semitone="10">A#/Bb</div>
                     <div class="chord-pill" data-semitone="11">B</div>
+                </div>
+            </div>
+
+            <!-- Triads -->
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">Triads</span>
+                </div>
+                <div class="chord-pills voicing-quality-group">
+                    <div class="chord-pill active" data-val="M">M</div>
+                    <div class="chord-pill" data-val="m">m</div>
+                    <div class="chord-pill" data-val="dim">dim</div>
+                    <div class="chord-pill" data-val="aug">aug</div>
+                    <div class="chord-pill" data-val="sus4">sus4</div>
+                </div>
+            </div>
+
+            <!-- 7th Chords -->
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">7th Chords</span>
+                </div>
+                <div class="chord-pills voicing-quality-group">
+                    <div class="chord-pill" data-val="maj7">maj7</div>
+                    <div class="chord-pill" data-val="7">7</div>
+                    <div class="chord-pill" data-val="m7">m7</div>
+                    <div class="chord-pill" data-val="m7b5">m7(b5)</div>
+                    <div class="chord-pill" data-val="dim7">dim7</div>
+                    <div class="chord-pill" data-val="7sus4">7sus4</div>
+                    <div class="chord-pill" data-val="mM7">mM7</div>
+                </div>
+            </div>
+
+            <!-- Extensions -->
+            <div class="filter-col">
+                <div class="filter-header">
+                    <span class="filter-group-title">Extensions</span>
+                </div>
+                <div class="chord-pills voicing-quality-group">
+                    <div class="chord-pill" data-val="maj9">maj9</div>
+                    <div class="chord-pill" data-val="m9">m9</div>
+                    <div class="chord-pill" data-val="m11">m11</div>
+                    <div class="chord-pill" data-val="9">9</div>
+                    <div class="chord-pill" data-val="13">13</div>
+                    <div class="chord-pill" data-val="7(b9)">7(b9)</div>
+                    <div class="chord-pill" data-val="7(#9)">7(#9)</div>
+                    <div class="chord-pill" data-val="7alt">7alt</div>
                 </div>
             </div>
         </div>

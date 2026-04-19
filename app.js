@@ -481,7 +481,7 @@ const NOTE_NAMES_FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', '
 const FLAT_ROOTS = [1, 3, 5, 6, 8, 10]; // Db, Eb, F, Gb, Ab, Bb 쪽은 b 표기
 
 // 현재 편집 상태
-let voicingSelectedQuality = '';     // 기본 M
+let voicingSelectedQuality = 'M';    // 기본 M (HTML pill도 data-val="M"에 active)
 let voicingRootSemitone = 0;         // 기본 C
 let voicingActiveMidiNotes = new Set(); // 건반에서 눌린 MIDI 번호들
 let cachedVoicings = [];             // 현재 퀄리티의 저장된 보이싱 목록
@@ -561,9 +561,9 @@ function refreshKeyboardVisual() {
 // 루트 pill / 퀄리티 pill 선택 UI
 function setupVoicingPills() {
     // 퀄리티 pill — 싱글 셀렉트
-    document.querySelectorAll('#voicing-quality-pills .chord-pill').forEach(p => {
+    document.querySelectorAll('.voicing-quality-group .chord-pill').forEach(p => {
         p.addEventListener('click', () => {
-            document.querySelectorAll('#voicing-quality-pills .chord-pill').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.voicing-quality-group .chord-pill').forEach(x => x.classList.remove('active'));
             p.classList.add('active');
             voicingSelectedQuality = p.getAttribute('data-val');
             updateVoicingLabel();
