@@ -730,8 +730,17 @@ async function saveCurrentVoicing() {
         alert('Click some notes on the keyboard first!');
         return;
     }
-    if (typeof window.saveVoicing !== 'function') {
-        alert('Please sign in to save voicings.');
+    // 🔐 로그인 체크 — 안 돼 있으면 Google 로그인으로 바로 안내 (기술적 에러 대신 친절한 CTA)
+    const signedIn = typeof window.isSignedIn === 'function' && window.isSignedIn();
+    if (!signedIn) {
+        const wantSignIn = confirm(
+            'Sign in to save voicings to your library.\n\n' +
+            'Your voicings sync across devices and stay available whenever you come back. ' +
+            'Sign in with Google now?'
+        );
+        if (wantSignIn && typeof window.handleAuth === 'function') {
+            window.handleAuth(); // Google 로그인 팝업 열림
+        }
         return;
     }
     const intervals = currentVoicingToIntervals();
@@ -742,6 +751,11 @@ async function saveCurrentVoicing() {
         });
         await loadVoicingsForCurrentQuality();
     } catch (err) {
+        // "Not signed in" 에러는 위에서 걸러지지만, 세션 만료 등 edge case 대응
+        if (err && err.message === 'Not signed in') {
+            alert('Your session has expired. Please sign in again.');
+            return;
+        }
         console.error('Save voicing failed:', err);
         alert('Failed to save voicing. Check console.');
     }
@@ -793,9 +807,11 @@ function renderVoicingList() {
     if (!cachedVoicings || cachedVoicings.length === 0) {
         const empty = document.createElement('div');
         empty.id = 'voicing-empty-msg';
-        empty.innerText = typeof window.saveVoicing !== 'function'
-            ? 'Sign in to save and view your voicings.'
-            : 'No voicings saved for this quality yet. Click notes on the keyboard and hit Save.';
+        // 실제 로그인 상태로 메시지 분기 (saveVoicing 함수는 auth.js 로드되면 항상 존재해서 부정확했음)
+        const signedInEmpty = typeof window.isSignedIn === 'function' && window.isSignedIn();
+        empty.innerText = signedInEmpty
+            ? 'No voicings saved for this quality yet. Click notes on the keyboard and hit Save.'
+            : 'Sign in to save and view your voicings.';
         listEl.appendChild(empty);
         return;
     }
@@ -937,10 +953,25 @@ document.getElementById('voicing-clear-btn').addEventListener('click', () => {
 // --- 초기화 ---
 setupVoicingPills();
 
-// 로그인 상태 바뀌면 리스트 다시 로드
+// 로그인 직후 저장된 보이싱 가져오기
 window.addEventListener('user-settings-loaded', () => {
     if (!document.getElementById('voicing-screen').classList.contains('hidden')) {
         loadVoicingsForCurrentQuality();
+    }
+});
+
+// 로그인/로그아웃 둘 다 반응 — Voicing 화면 열려있으면 리스트/빈 메시지 갱신
+// (로그인 직후엔 'user-settings-loaded' 쪽에서도 load가 도니 중복 호출될 수 있지만 idempotent)
+window.addEventListener('auth-state-changed', (e) => {
+    const voicingScreen = document.getElementById('voicing-screen');
+    if (!voicingScreen || voicingScreen.classList.contains('hidden')) return;
+    if (e.detail && e.detail.signedIn) {
+        loadVoicingsForCurrentQuality(); // 내 보이싱 불러오기
+    } else {
+        // 로그아웃: 캐시 비우고 빈 메시지 다시 렌더
+        cachedVoicings = [];
+        currentlyHighlightedVoicingId = null;
+        renderVoicingList();
     }
 });
 

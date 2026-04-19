@@ -114,6 +114,9 @@ window.updateVoicingNote = async (voicingId, note) => {
     const docRef = doc(db, "users", auth.currentUser.uid, "voicings", voicingId);
     await setDoc(docRef, { note: note || '' }, { merge: true });
 };
+
+// app.js(모듈이 아님)가 로그인 상태를 체크할 수 있도록 헬퍼 노출
+window.isSignedIn = () => !!auth.currentUser;
 // =====================================================================
 
 // 구글 제공업체 설정 (무조건 계정 선택 창 띄우기 추가!)
@@ -192,4 +195,8 @@ onAuthStateChanged(auth, (user) => {
         signinBtn.innerText = "SIGN IN";
         localStorage.removeItem("lastActiveTime"); // 타이머 기록 삭제
     }
+    // 🚀 app.js(보이싱 저장 버튼 등)가 로그인/로그아웃에 반응할 수 있도록 커스텀 이벤트 발행
+    window.dispatchEvent(new CustomEvent('auth-state-changed', {
+        detail: { signedIn: !!user }
+    }));
 });
