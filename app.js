@@ -316,6 +316,7 @@ function updateChordSequence() {
     document.getElementById('chord-prev').innerHTML = formatChordHTML(prevChord);
     document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
     document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
+    pushToHistory(currentChord);
 }
 
 function initChords() {
@@ -323,7 +324,102 @@ function initChords() {
     document.getElementById('chord-prev').innerHTML = "";
     document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
     document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
+    pushToHistory(currentChord);
 }
+
+// =====================================================================
+// 🕐 코드 prompt 히스토리 (메모리 기반, 새로고침 시 초기화)
+// =====================================================================
+const HISTORY_CAP = 30;
+const chordPromptHistory = []; // 최신이 앞 [{chord, at}]
+
+function pushToHistory(chord) {
+    if (!chord || chord === '---') return;
+    chordPromptHistory.unshift({ chord, at: Date.now() });
+    if (chordPromptHistory.length > HISTORY_CAP) {
+        chordPromptHistory.length = HISTORY_CAP;
+    }
+    renderHistoryPanel();
+}
+
+// 짧은 상대시간 ("just now" / "2m ago" / "1h 3m ago" / "2d ago")
+function formatShortElapsed(ms) {
+    const diff = Date.now() - ms;
+    if (diff < 0) return 'just now';
+    const sec = Math.floor(diff / 1000);
+    if (sec < 30) return 'just now';
+    const min = Math.floor(sec / 60);
+    if (min < 1) return `${sec}s ago`;
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    const leftMin = min - hr * 60;
+    if (hr < 24) return leftMin === 0 ? `${hr}h ago` : `${hr}h ${leftMin}m ago`;
+    const day = Math.floor(hr / 24);
+    return `${day}d ago`;
+}
+
+function renderHistoryPanel() {
+    const listEl = document.getElementById('history-list');
+    if (!listEl) return;
+    if (chordPromptHistory.length === 0) {
+        listEl.innerHTML = '<div class="history-empty">No chords yet. Start practicing to build history.</div>';
+        return;
+    }
+    listEl.innerHTML = '';
+    chordPromptHistory.forEach((entry, idx) => {
+        const row = document.createElement('div');
+        row.className = 'history-entry';
+        row.innerHTML = `
+            <span class="history-entry-chord">${formatChordHTML(entry.chord)}</span>
+            <span class="history-entry-time">${formatShortElapsed(entry.at)}</span>
+        `;
+        row.addEventListener('click', () => jumpToHistoryEntry(idx));
+        listEl.appendChild(row);
+    });
+}
+
+// 특정 엔트리를 다시 현재 코드로 — 템포 재생 중이면 정지
+function jumpToHistoryEntry(idx) {
+    const entry = chordPromptHistory[idx];
+    if (!entry) return;
+    stop(); // 템포 모드 재생 중이면 정지
+    prevChord = currentChord;
+    currentChord = entry.chord;
+    // next는 새로 뽑음 (이어서 연습 가능하게)
+    nextChord = generateOneChord();
+    document.getElementById('chord-prev').innerHTML = formatChordHTML(prevChord);
+    document.getElementById('chord-current').innerHTML = formatChordHTML(currentChord);
+    document.getElementById('chord-next').innerHTML = formatChordHTML(nextChord);
+    // 히스토리에는 다시 push하지 않음 — 이미 기록된 걸 되짚어보는 동작이라
+    closeHistoryPanel();
+}
+
+function openHistoryPanel() {
+    const panel = document.getElementById('history-panel');
+    if (!panel) return;
+    renderHistoryPanel(); // 열 때마다 시간 갱신
+    panel.classList.remove('closed');
+    panel.setAttribute('aria-hidden', 'false');
+}
+function closeHistoryPanel() {
+    const panel = document.getElementById('history-panel');
+    if (!panel) return;
+    panel.classList.add('closed');
+    panel.setAttribute('aria-hidden', 'true');
+}
+
+document.getElementById('history-toggle-btn').addEventListener('click', () => {
+    const panel = document.getElementById('history-panel');
+    if (panel.classList.contains('closed')) openHistoryPanel();
+    else closeHistoryPanel();
+});
+document.getElementById('history-close-btn').addEventListener('click', closeHistoryPanel);
+
+// 패널이 열려있는 동안 열린 상태에서 매 30초마다 시간 표기 갱신
+setInterval(() => {
+    const panel = document.getElementById('history-panel');
+    if (panel && !panel.classList.contains('closed')) renderHistoryPanel();
+}, 30 * 1000);
 
 let isPlaying = false, currentBeat = 0, currentMode = 'TAP';
 const bpmInput = document.getElementById('bpm-input'), bpmSlider = document.getElementById('bpm-slider'), beatsInput = document.getElementById('beats-input'), playBtn = document.getElementById('play-pause-btn');
@@ -453,6 +549,9 @@ window.addEventListener('keydown', (e) => {
     // 버튼에 포커스 남아있으면 풀어주기 (스페이스가 두 번 먹히는 것 방지)
     if (document.activeElement && document.activeElement.tagName === 'BUTTON') document.activeElement.blur();
     if (document.getElementById('practice-screen').classList.contains('hidden')) return;
+    // 히스토리 패널 열려있으면 스페이스 무시
+    const histPanel = document.getElementById('history-panel');
+    if (histPanel && !histPanel.classList.contains('closed')) return;
     e.preventDefault();
     triggerPractice();
 });
@@ -460,7 +559,7 @@ window.addEventListener('keydown', (e) => {
 // 화면 빈 공간 클릭 시 연습 트리거 (버튼/입력/필터 등은 자기 이벤트가 따로 있음)
 document.addEventListener('click', (e) => {
     if (document.getElementById('practice-screen').classList.contains('hidden')) return;
-    if (e.target.closest('button, input, a, #filter-panel, .mode-selector, #top-logo, #top-bar-bg, .setting-group, #footer-area')) return;
+    if (e.target.closest('button, input, a, #filter-panel, #history-panel, .top-controls, .mode-selector, #top-logo, #top-bar-bg, .setting-group, #footer-area')) return;
     triggerPractice();
 });
 

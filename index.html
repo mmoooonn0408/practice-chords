@@ -51,7 +51,21 @@
             <button class="mode-btn" id="tempo-mode-btn">TEMPO</button>
         </div>
 
-        <button id="filter-toggle-btn">CHORD SELECTION</button>
+        <div class="top-controls">
+            <button id="filter-toggle-btn">CHORD SELECTION</button>
+            <button id="history-toggle-btn" title="Recent chords">HISTORY</button>
+        </div>
+
+        <!-- 최근 코드 히스토리 패널 (오른쪽 슬라이드) -->
+        <aside id="history-panel" class="closed" aria-hidden="true">
+            <div class="history-header">
+                <span class="history-title">Recent chords</span>
+                <button id="history-close-btn" title="Close">×</button>
+            </div>
+            <div id="history-list">
+                <div class="history-empty">No chords yet. Start practicing to build history.</div>
+            </div>
+        </aside>
 
         <div id="filter-panel" class="hidden" style="flex-wrap: wrap;">
             <div class="filter-col">
