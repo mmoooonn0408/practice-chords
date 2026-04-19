@@ -925,7 +925,7 @@ function openNoteEditor(noteEl, voicing) {
     const textarea = document.createElement('textarea');
     textarea.className = 'voicing-row-note-editor';
     textarea.value = currentNote;
-    textarea.placeholder = 'e.g., Learned from Hank Jones video — works well over ii-V in Bill Evans style';
+    textarea.placeholder = 'Add a note…';
     // click이 부모 row로 버블링되어 보이싱이 로드되는 것을 방지
     textarea.addEventListener('click', (e) => e.stopPropagation());
 
