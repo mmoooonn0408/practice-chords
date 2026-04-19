@@ -60,7 +60,9 @@ function updateFilters() {
     activeRoots = [];
     document.querySelectorAll('#root-pills .chord-pill.active').forEach(p => activeRoots.push(...p.getAttribute('data-root').split(',')));
     activeTypes = [];
-    document.querySelectorAll('.chord-pill.active[data-val]').forEach(p => activeTypes.push(p.getAttribute('data-val')));
+    // ⚠️ 범위를 #filter-panel 로 제한 — 보이싱 화면의 M pill(data-val="M")이 섞이면
+    //    activeTypes 에 'M'이 들어가서 weight slider가 undefined로 뜨는 버그가 남.
+    document.querySelectorAll('#filter-panel .chord-pill.active[data-val]').forEach(p => activeTypes.push(p.getAttribute('data-val')));
 
     // 패널이 열려있다면 슬라이더도 실시간 새로고침
     if (weightConfigPanel && weightConfigPanel.style.display === 'block') {
@@ -86,7 +88,8 @@ function getCurrentSettings() {
         selectedRoots.push(p.getAttribute('data-root'));
     });
     const selectedTypes = [];
-    document.querySelectorAll('.chord-pill.active[data-val]').forEach(p => {
+    // ⚠️ 연습 화면 pill만 저장 — 보이싱 화면 pill이 섞이지 않도록 범위 제한
+    document.querySelectorAll('#filter-panel .chord-pill.active[data-val]').forEach(p => {
         selectedTypes.push(p.getAttribute('data-val'));
     });
     // 🚀 Firestore는 빈 문자열 키 및 '__ 로 시작/끝나는' 키를 거부하므로
