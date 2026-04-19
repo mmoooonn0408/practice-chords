@@ -734,24 +734,48 @@ function intervalsToDegreesStr(intervals) {
     return intervals.map(iv => map[iv % 12]).join(' ');
 }
 
-// 🕐 상대 시간 포맷 — "today" / "3 days ago" / "2 weeks ago" / "Mar 12" / "Mar 12, 2024"
-// 1년 이상 지났으면 연도 포함해서 절대 날짜로, 그 이하는 맥락에 따라 상대/절대 혼용
+// 🕐 상대 시간 포맷
+//   < 1분          → "just now"
+//   1~59분         → "X minutes ago"
+//   1~23시간       → "X hours Y minutes ago" (분=0이면 그냥 "X hours ago")
+//   1일            → "1 day ago"
+//   2~30일         → "X days ago"
+//   31일~          → 절대 날짜. 같은 해면 "Mar 12", 다른 해면 "Mar 12, 2024"
 function formatRelativeTime(firestoreTimestamp) {
     if (!firestoreTimestamp || typeof firestoreTimestamp.seconds !== 'number') return '';
     const date = new Date(firestoreTimestamp.seconds * 1000);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return 'just now'; // 서버/클라이언트 시계 오차
-    if (diffDays < 1) return 'today';
-    if (diffDays === 1) return 'yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) {
-        const w = Math.floor(diffDays / 7);
-        return w === 1 ? '1 week ago' : `${w} weeks ago`;
+    if (diffMs < 0) return 'just now'; // 서버/클라이언트 시계 오차
+
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    // < 1분
+    if (diffMin < 1) return 'just now';
+
+    // 1~59분
+    if (diffMin < 60) {
+        return diffMin === 1 ? '1 minute ago' : `${diffMin} minutes ago`;
     }
-    // 한 달 이상: 절대 날짜. 같은 해면 연도 생략, 다른 해면 연도 포함
+
+    // 1~23시간: 시간 + 남은 분 같이 표기
+    if (diffHour < 24) {
+        const leftoverMin = diffMin - diffHour * 60;
+        const hourStr = diffHour === 1 ? '1 hour' : `${diffHour} hours`;
+        if (leftoverMin === 0) return `${hourStr} ago`;
+        const minStr = leftoverMin === 1 ? '1 minute' : `${leftoverMin} minutes`;
+        return `${hourStr} ${minStr} ago`;
+    }
+
+    // 1일 ~ 30일
+    if (diffDay === 1) return '1 day ago';
+    if (diffDay <= 30) return `${diffDay} days ago`;
+
+    // 31일 이상: 절대 날짜
     const sameYear = date.getFullYear() === now.getFullYear();
     return date.toLocaleDateString('en-US', sameYear
         ? { month: 'short', day: 'numeric' }
